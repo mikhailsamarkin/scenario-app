@@ -1,0 +1,70 @@
+{
+    "[php]": {
+    },
+    /** >>> files **/
+    "files.autoSave": "onFocusChange",
+    "files.autoGuessEncoding": true,
+    "files.watcherExclude": {
+        "**/.git/**": true,
+        "**/node_modules/**": true,
+        "**/var/**": true,
+        "**/cache/**": true,
+    },
+    "php.problems.excludeGitIgnore": true,
+    /** <<< files **/
+
+    /** >>> theme settings **/
+    "workbench.colorTheme": "Darcula Contrast",
+    "editor.fontSize": 13,
+    "terminal.integrated.fontSize": 14,
+    "debug.console.fontSize": 14,
+    "workbench.tree.indent": 20,
+    "workbench.iconTheme": "vscode-jetbrains-icon-theme-2023-dark",
+    "workbench.colorCustomizations": {
+        "sideBar.background": "#2b2d30",
+        "sideBarSectionHeader.background": "#2b2d30",
+        "sideBarSectionHeader.border":"#1e1f22",
+        "editor.background": "#1e1f22",
+        "titleBar.activeBackground": "#2b2d30",
+        "statusBar.background": "#2b2d30",
+        "activityBar.background": "#2b2d30",
+        "activityBar.border":"#1e1f22",
+        "panel.background":"#2b2d30",
+        "panel.border": "#1e1f22"
+    },
+    /** <<< theme settings **/
+
+    /** >>> window **/
+    "window.commandCenter": true,
+    "window.customTitleBarVisibility": "auto",
+    "window.titleBarStyle": "custom",
+    "window.openFoldersInNewWindow": "on",
+    "workbench.activityBar.orientation": "vertical",
+    /** <<< window **/
+
+    /** >>> behavior **/
+    "workbench.editor.enablePreview": false,
+    "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
+    "workbench.list.openMode": "doubleClick",
+    "redhat.telemetry.enabled": false,
+    "gitlens.currentLine.enabled": false,
+    "symfony-vscode.consolePath": "bin/console",
+    "explorer.confirmDelete": false,
+    "sqltools.connections": [
+    ],
+    /** <<< behavior **/
+
+    /** >>> Flutter / Dart (Scenario) **/
+    "dart.flutterSdkPath": null,
+    "dart.previewFlutterUiGuides": true,
+    "dart.previewFlutterUiGuidesCustomTracking": true,
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.selectionHighlight": false,
+        "editor.suggestSelection": "first",
+        "editor.tabCompletion": "onlySnippets"
+    },
+    "dart.debugExternalPackageLibraries": false,
+    "dart.debugSdkLibraries": false,
+    /** <<< Flutter / Dart **/
+}
