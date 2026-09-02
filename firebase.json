@@ -1,0 +1,32 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "dev": {
+          "projectId": "scenario-ba26a",
+          "appId": "1:602717699795:android:467217cf9ba76543db9e26",
+          "fileOutput": "android/app/src/dev/google-services.json"
+        },
+        "prod": {
+          "projectId": "scenario-prod-491c",
+          "appId": "1:268811118114:android:1e280a0d804959fb4b8c7b",
+          "fileOutput": "android/app/src/prod/google-services.json"
+        }
+      },
+      "ios": {
+        "dev": {
+          "projectId": "scenario-ba26a",
+          "appId": "1:602717699795:ios:368d1dd99f856220db9e26",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info-Dev.plist"
+        },
+        "prod": {
+          "projectId": "scenario-prod-491c",
+          "appId": "1:268811118114:ios:ac89edeebea89d184b8c7b",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info-Prod.plist"
+        }
+      }
+    }
+  }
+}

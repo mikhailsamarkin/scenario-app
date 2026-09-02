@@ -1,0 +1,64 @@
+name: CI
+
+# Минимальный CI (US-E0-02, шаг 10):
+# 1. gitleaks — проверка секретов в коде (A-40).
+# 2. flutter build apk --flavor dev — сборка dev-окружения.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  flutter-build:
+    name: Flutter build (dev)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.2
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Write google-services.json (dev)
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON_DEV }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
+            echo "::error::GOOGLE_SERVICES_JSON_DEV not configured"
+            exit 1
+          fi
+          mkdir -p android/app/src/dev
+          echo "$GOOGLE_SERVICES_JSON" > android/app/src/dev/google-services.json
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Build APK (dev)
+        run: flutter build apk --flavor dev
