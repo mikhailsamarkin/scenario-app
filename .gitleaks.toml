@@ -1,0 +1,11 @@
+title = "Scenario gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Firebase client API keys are public by design (flutterfire)"
+paths = [
+  '''lib/firebase_options_dev.dart''',
+  '''lib/firebase_options_prod.dart''',
+]
