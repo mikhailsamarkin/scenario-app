@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scenario-games.ru/schemas/content-contract.schema.json",
+  "title": "Scenario Content Contract (SP-E0-01)",
+  "description": "Единый контракт данных публичных агрегатов для МП (Flutter) и Next.js (SSG). Соответствует СТ §4/§5 (A-10, A-12, A-38) и спецификации SP-E0-01 §4.2–§4.6.",
+  "version": "1",
+  "type": "object",
+  "oneOf": [
+    {"$ref": "#/definitions/homeFeed"},
+    {"$ref": "#/definitions/semanticGroupPublic"},
+    {"$ref": "#/definitions/scenarioPublic"},
+    {"$ref": "#/definitions/gamePublic"},
+    {"$ref": "#/definitions/sitemapPublic"}
+  ],
+  "definitions": {
+    "playersHint": {
+      "type": "string",
+      "enum": ["players_1", "players_2", "players_2_4", "players_2_5", "players_2_6", "players_5_plus"]
+    },
+    "durationBucket": {
+      "type": "string",
+      "enum": ["warmup", "short", "evening", "long", "main_event"]
+    },
+    "ageHint": {
+      "type": "string",
+      "enum": ["age_kids", "age_family", "age_adults"]
+    },
+    "rulesComplexity": {
+      "type": "string",
+      "enum": ["easy", "normal", "heavy"]
+    },
+    "frameType": {
+      "type": "string",
+      "enum": ["teaser", "box", "in_play", "mechanic_closeup"]
+    },
+    "contentVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "slide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["imageRef", "frameType"],
+      "properties": {
+        "imageRef": {"type": "string"},
+        "frameType": {"$ref": "#/definitions/frameType"},
+        "caption": {"type": "string"},
+        "alt": {"type": "string"}
+      }
+    },
+    "scenarioCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenarioId", "slug", "title"],
+      "properties": {
+        "scenarioId": {"type": "string"},
+        "slug": {"type": "string"},
+        "title": {"type": "string"},
+        "subtitle": {"type": "string"},
+        "imageRef": {"type": "string"},
+        "alt": {"type": "string"}
+      }
+    },
+    "groupRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semanticGroupId", "slug", "title"],
+      "properties": {
+        "semanticGroupId": {"type": "string"},
+        "slug": {"type": "string"},
+        "title": {"type": "string"}
+      }
+    },
+    "scenarioGameRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gameId", "slug", "title", "shortDescription"],
+      "properties": {
+        "gameId": {"type": "string"},
+        "slug": {"type": "string"},
+        "title": {"type": "string"},
+        "shortDescription": {"type": "string"},
+        "imageRef": {"type": "string"},
+        "alt": {"type": "string"},
+        "playersHint": {"$ref": "#/definitions/playersHint"},
+        "durationBucket": {"$ref": "#/definitions/durationBucket"},
+        "ageHint": {"$ref": "#/definitions/ageHint"},
+        "rulesComplexity": {"$ref": "#/definitions/rulesComplexity"}
+      }
+    },
+    "gameScenarioRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenarioId", "slug", "title", "shortDescription"],
+      "properties": {
+        "scenarioId": {"type": "string"},
+        "slug": {"type": "string"},
+        "title": {"type": "string"},
+        "shortDescription": {"type": "string"}
+      }
+    },
+    "homeFeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contentVersion", "updatedAt", "carousel", "vitrine", "groups"],
+      "properties": {
+        "contentVersion": {"$ref": "#/definitions/contentVersion"},
+        "updatedAt": {"$ref": "#/definitions/updatedAt"},
+        "carousel": {"type": "array", "items": {"$ref": "#/definitions/slide"}},
+        "vitrine": {"type": "array", "items": {"$ref": "#/definitions/scenarioCard"}},
+        "groups": {"type": "array", "items": {"$ref": "#/definitions/groupRef"}}
+      }
+    },
+    "semanticGroupPublic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "slug", "isPastArchive", "scenarios", "contentVersion", "updatedAt"],
+      "properties": {
+        "id": {"type": "string"},
+        "title": {"type": "string"},
+        "slug": {"type": "string"},
+        "listOrder": {"type": "integer"},
+        "isPastArchive": {"type": "boolean"},
+        "scenarios": {"type": "array", "items": {"$ref": "#/definitions/scenarioCard"}},
+        "contentVersion": {"$ref": "#/definitions/contentVersion"},
+        "updatedAt": {"$ref": "#/definitions/updatedAt"}
+      }
+    },
+    "scenarioPublic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slug", "title", "whyTheseGames", "games", "contentVersion", "updatedAt"],
+      "properties": {
+        "id": {"type": "string"},
+        "slug": {"type": "string"},
+        "title": {"type": "string"},
+        "subtitle": {"type": "string"},
+        "whyTheseGames": {"type": "string"},
+        "seoTitle": {"type": "string"},
+        "seoDescription": {"type": "string"},
+        "shareTitle": {"type": "string"},
+        "shareText": {"type": "string"},
+        "shareImageUrl": {"type": "string"},
+        "publishedAt": {"$ref": "#/definitions/updatedAt"},
+        "games": {"type": "array", "items": {"$ref": "#/definitions/scenarioGameRef"}},
+        "semanticGroupIds": {"type": "array", "items": {"type": "string"}},
+        "contentVersion": {"$ref": "#/definitions/contentVersion"},
+        "updatedAt": {"$ref": "#/definitions/updatedAt"}
+      }
+    },
+    "gamePublic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slug", "title", "playersHint", "durationBucket", "ageHint", "rulesComplexity", "carousel", "scenarios", "contentVersion", "updatedAt"],
+      "properties": {
+        "id": {"type": "string"},
+        "slug": {"type": "string"},
+        "title": {"type": "string"},
+        "seoTitle": {"type": "string"},
+        "seoDescription": {"type": "string"},
+        "playersHint": {"$ref": "#/definitions/playersHint"},
+        "durationBucket": {"$ref": "#/definitions/durationBucket"},
+        "ageHint": {"$ref": "#/definitions/ageHint"},
+        "rulesComplexity": {"$ref": "#/definitions/rulesComplexity"},
+        "carousel": {"type": "array", "items": {"$ref": "#/definitions/slide"}},
+        "scenarios": {"type": "array", "items": {"$ref": "#/definitions/gameScenarioRef"}},
+        "contentVersion": {"$ref": "#/definitions/contentVersion"},
+        "updatedAt": {"$ref": "#/definitions/updatedAt"}
+      }
+    },
+    "sitemapPublic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenarioSlugs", "gameSlugs", "contentVersion", "updatedAt"],
+      "properties": {
+        "scenarioSlugs": {"type": "array", "items": {"type": "string"}},
+        "gameSlugs": {"type": "array", "items": {"type": "string"}},
+        "contentVersion": {"$ref": "#/definitions/contentVersion"},
+        "updatedAt": {"$ref": "#/definitions/updatedAt"}
+      }
+    }
+  }
+}

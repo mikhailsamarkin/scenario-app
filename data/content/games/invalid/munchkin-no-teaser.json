@@ -1,0 +1,16 @@
+{
+  "id": "munchkin-no-teaser",
+  "slug": "munchkin-no-teaser",
+  "title": "Манчкин без тизера",
+  "playersHint": "players_2_6",
+  "durationBucket": "evening",
+  "ageHint": "age_adults",
+  "rulesComplexity": "normal",
+  "carousel": [
+    {
+      "imageRef": "images/box.jpg",
+      "frameType": "box",
+      "alt": "Карточки Манчкина"
+    }
+  ]
+}

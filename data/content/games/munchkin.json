@@ -1,0 +1,22 @@
+{
+  "id": "munchkin",
+  "slug": "munchkin",
+  "title": "Манчкин",
+  "playersHint": "players_2_6",
+  "durationBucket": "evening",
+  "ageHint": "age_adults",
+  "rulesComplexity": "normal",
+  "carousel": [
+    {
+      "imageRef": "images/teaser.jpg",
+      "frameType": "teaser",
+      "caption": "Коробка Манчкина",
+      "alt": "Коробка настольной игры Манчкин"
+    },
+    {
+      "imageRef": "images/box.jpg",
+      "frameType": "box",
+      "alt": "Карточки Манчкина"
+    }
+  ]
+}

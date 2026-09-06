@@ -1,0 +1,40 @@
+name: import-content
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'data/content/games/**'
+      - 'tools/**'
+
+jobs:
+  import-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install tools deps
+        working-directory: tools
+        run: npm ci
+
+      - name: Validate fixtures
+        working-directory: tools
+        run: |
+          for f in ../data/content/games/*.json; do
+            node validate-game.mjs "$f"
+          done
+
+      - name: Import games to dev (scenario-ba26a)
+        working-directory: tools
+        env:
+          FIREBASE_SERVICE_ACCOUNT_PATH: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PATH }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL_DEV }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}
+        run: |
+          for f in ../data/content/games/*.json; do
+            node import-games.mjs --project dev "$f"
+          done

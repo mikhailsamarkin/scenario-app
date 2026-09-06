@@ -1,0 +1,16 @@
+{
+  "id": "munchkin-bad-enum",
+  "slug": "munchkin-bad-enum",
+  "title": "Манчкин с невалидным enum",
+  "playersHint": "players_9",
+  "durationBucket": "evening",
+  "ageHint": "age_adults",
+  "rulesComplexity": "normal",
+  "carousel": [
+    {
+      "imageRef": "images/teaser.jpg",
+      "frameType": "teaser",
+      "alt": "Коробка Манчкина"
+    }
+  ]
+}

@@ -56,3 +56,9 @@ ios/Runner/GoogleService-Info-Prod.plist
 
 # Временные файлы SUPABASE
 /supabase/.temp/*
+
+# Node-зависимости tools-скриптов
+/tools/node_modules/
+
+# Сгенерированный Flutter-файл (devtools)
+/devtools_options.yaml

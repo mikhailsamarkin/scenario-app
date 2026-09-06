@@ -1,0 +1,19 @@
+{
+  "name": "scenario-content-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Инструменты импорта контента Scenario (SP-E1-01): валидация и публикация игр в Firestore + Supabase Storage.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "validate": "node validate-game.mjs",
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "ajv": "^8.17.1",
+    "firebase-admin": "^12.7.0"
+  }
+}
