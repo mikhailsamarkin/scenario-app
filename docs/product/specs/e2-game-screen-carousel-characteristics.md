@@ -86,6 +86,8 @@ flowchart TD
 
 * Навигация: экран игры открывается из сценария с передачей `gameId` (и `scenarioId` для контекста описания).
 
+* **Реализовано:** `scenario/lib/features/game/game_screen.dart` — `GameScreen` (StatefulWidget), читает `game_public/{gameId}` через инжектируемый `AggregateRepository` (для тестов — фейк).
+
 ### Шаг 2. Карусель (AC-01)
 
 * Виджет карусели по `GamePublic.carousel` (**CR-5**): каждый слайд — `Slide` с `imageRef` → `supabasePublicUrl(imageRef)` (**A-39**), `frameType` и `alt` где задано.
@@ -94,17 +96,23 @@ flowchart TD
 
 * Изображения — через кэшируемый виджет (**US-E2-06**); на момент этой стори допустим прямой `Image.network` с placeholder, кэш подключается в US-E2-06.
 
+* **Реализовано:** карусель `_Carousel` (PageView) в `game_screen.dart`; изображение слайда — через инжектируемый `slideImageBuilder` (по умолчанию `CachedNetworkImageWidget` из US-E2-06), alt выводится где задано.
+
 ### Шаг 3. Четыре характеристики (AC-02)
 
 * Блок характеристик из `playersHint`, `durationBucket`, `ageHint`, `rulesComplexity` (**CR-4.1**).
 
 * Подписи на русском — из `uiLabel` enum (`PlayersHint`, `AgeHint`) и фиксированных подписей для `DurationBucket`/`RulesComplexity` (**ED-2**).
 
+* **Реализовано:** `_Characteristics` в `game_screen.dart` + хелперы `durationBucketLabel`/`rulesComplexityLabel`.
+
 ### Шаг 4. Краткое описание в контексте сценария (AC-03)
 
 * Из `GamePublic.scenarios` найти `GameScenarioRef` с `scenarioId == открытый сценарий`; показать его `shortDescription` (**A-12**).
 
 * Если связка не найдена — описание не показывается (не подставлять из другого сценария, **ED-9**).
+
+* **Реализовано:** поиск `GameScenarioRef` по `scenarioId` в `_GameContent`; при отсутствии связки блок не выводится.
 
 ### Шаг 5. Тесты
 
@@ -116,11 +124,15 @@ flowchart TD
 
 * Widget-тесты с фейковым `AggregateRepository` (по образцу `test/contract_test.dart`): рендер `GamePublic` с каруселью, характеристиками и `GameScenarioRef`.
 
+* **Реализовано:** `scenario/test/game_screen_test.dart` — 4 теста (AC-01..AC-03 + ED-9). Изображение слайда подставляется заглушкой через `slideImageBuilder`, чтобы не зависеть от плагина дискового кэша.
+
 ## 5. Файлы
 
 * `docs/product/specs/e2-game-screen-carousel-characteristics.md` — **настоящий документ** (SP-E2-03).
 
-* `scenario/lib/` — экран игры, виджет карусели, блок характеристик (предлагается).
+* `scenario/lib/features/game/game_screen.dart` — экран игры, карусель, характеристики (реализовано).
+
+* `scenario/lib/cache/cached_network_image_widget.dart` — кэшируемое изображение слайда (US-E2-06, реализовано).
 
 * `scenario/lib/data/contract/models.dart` — `GamePublic`, `Slide`, `GameScenarioRef` (существуют, контракт не меняется).
 
@@ -128,11 +140,11 @@ flowchart TD
 
 * `scenario/lib/supabase_config.dart` — `supabasePublicUrl` (существует).
 
-* `scenario/test/` — widget-тесты экрана (предлагается).
+* `scenario/test/game_screen_test.dart` — widget-тесты экрана (реализовано).
 
 ## 6. Риски
 
-* **Кэш изображений не подключён** (**US-E2-06**) — на этой стори возможны повторные сетевые загрузки. Митиг: допустим `Image.network` с placeholder; кэш — отдельная стори.
+* **Кэш изображений подключён** (**US-E2-06**): слайды рендерятся через `CachedNetworkImageWidget`; в тестах — заглушка через `slideImageBuilder`.
 
 * **Описание связки отсутствует** — экран без `shortDescription`. Митиг: не показывать блок (ED-9), не подставлять чужое.
 
@@ -169,3 +181,4 @@ flowchart TD
 | Дата       | Автор | Изменение                                                                                                                          |
 | ---------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-09-07 | AID   | Первая версия (drafted). Экран игры из `game_public` (A-11/A-38): карусель CR-5, характеристики CR-4.1, описание в контексте сценария A-12/ED-9. |
+| 2026-09-07 | AID   | Реализован экран игры (`lib/features/game/game_screen.dart`): карусель, характеристики, описание; widget-тесты AC-01..AC-03 + ED-9 (`test/game_screen_test.dart`). Изображение — через `CachedNetworkImageWidget` (US-E2-06). |

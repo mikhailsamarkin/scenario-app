@@ -38,6 +38,10 @@ dependencies:
   # Supabase (медиа, ED-14)
   supabase_flutter: ^2.17.2
 
+  # Кэш изображений (ADR-004–009): cached_network_image, лимит по числу
+  # объектов (вариант B), политика LRU (A-21a, NFR-SR-6).
+  cached_network_image: ^4.0.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8

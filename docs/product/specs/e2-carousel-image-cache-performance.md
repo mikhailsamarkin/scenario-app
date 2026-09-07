@@ -88,7 +88,7 @@ flowchart TD
 
 * **Реализовано:** политика LRU-кэша с лимитом размера — `scenario/lib/cache/lru_cache.dart` (`LruCache`, `kImageCacheDefaultMaxBytes = 150 МБ`). Чистый Dart, не зависит от пакета (ED-13); покрыта unit-тестами `scenario/test/lru_cache_test.dart` (TC-01, TC-03).
 
-* Реализация в `scenario/lib/` — обёртка над `cached_network_image` (шаг 1): виджет/сервис кэшируемого изображения, принимающий публичный URL (`supabasePublicUrl(imageRef)`, **A-39**).
+* **Реализовано:** обёртка над `cached_network_image` — `scenario/lib/cache/cached_network_image_widget.dart` (`CachedNetworkImageWidget`), принимает публичный URL (`supabasePublicUrl(imageRef)`, **A-39**), placeholder и errorWidget. Зависимость `cached_network_image: ^4.0.0` добавлена в `pubspec.yaml` (ADR-004–009).
 
 * Параметры кэша (**ADR-004–009**): лимит — **по числу объектов** (`maxNrOfCacheObjects`), политика **LRU**; конфигурируемо (для тестов и dev — низкий лимит).
 
@@ -124,9 +124,9 @@ flowchart TD
 
 * `scenario/test/lru_cache_test.dart` — unit-тесты политики кэша (реализовано, TC-01/TC-03).
 
-* `scenario/lib/` — обёртка кэшируемого изображения на `cached_network_image` (предлагается, шаг 2) и применение в карусели (шаг 3, зависит от US-E2-03).
+* `scenario/lib/cache/cached_network_image_widget.dart` — обёртка кэшируемого изображения на `cached_network_image` (реализовано, шаг 2).
 
-* `scenario/pubspec.yaml` — зависимость на `cached_network_image` 4.x (шаг 1).
+* `scenario/pubspec.yaml` — зависимость на `cached_network_image` 4.x (реализовано, шаг 1).
 
 * `scenario/lib/data/contract/models.dart` — `Slide.imageRef` (существует; контракт не меняется, **ED-14**).
 
