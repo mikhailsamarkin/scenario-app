@@ -115,6 +115,7 @@
 | SP-E5-01 | [e5-share-scenario-system-share.md](../specs/e5-share-scenario-system-share.md) | US-E5-01 |
 | SP-E5-02 | [e5-universal-links-app.md](../specs/e5-universal-links-app.md) | US-E5-02 |
 | SP-E5-03 | [e5-web-fallback-og-utm.md](../specs/e5-web-fallback-og-utm.md) | US-E5-03 |
+| SP-E6-01 | [e6-analytics-events-schema.md](../specs/e6-analytics-events-schema.md) | US-E6-01 |
 
 ---
 
