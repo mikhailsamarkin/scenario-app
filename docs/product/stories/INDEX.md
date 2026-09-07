@@ -102,6 +102,7 @@
 | SP-E2-07 | [e2-mp-entry-navigation.md](../specs/e2-mp-entry-navigation.md) | US-E2-07 |
 | SP-E3-01 | [e3-onboarding-value-proposition.md](../specs/e3-onboarding-value-proposition.md) | US-E3-01 |
 | SP-E3-02 | [e3-push-subscribe-new-scenarios.md](../specs/e3-push-subscribe-new-scenarios.md) | US-E3-02 |
+| SP-E3-03 | [e3-daily-push-11msk.md](../specs/e3-daily-push-11msk.md) | US-E3-03 |
 | SP-E3-04 | [e3-push-deeplink-scenario.md](../specs/e3-push-deeplink-scenario.md) | US-E3-04 |
 | SP-E4-01 | [e4-seo-urls-scenario-game.md](../specs/e4-seo-urls-scenario-game.md) | US-E4-01 |
 | SP-E4-02 | [e4-site-internal-linking.md](../specs/e4-site-internal-linking.md) | US-E4-02 |
