@@ -31,7 +31,7 @@ void main() {
     expect(scenarioPublicPath('s1'), equals('scenario_public/s1'));
     expect(gamePublicPath('g1'), equals('game_public/g1'));
     expect(sitemapPublicPath(), equals('sitemap_public/main'));
-    expect(kContentContractVersion, equals(1));
+    expect(kContentContractVersion, equals(2));
   });
 
   test('HomeFeed: строгий парсинг и round-trip', () {
@@ -142,17 +142,25 @@ void main() {
     expect(round.toJson(), equals(game.toJson()));
   });
 
-  test('SitemapPublic: списки slug для SSG', () {
+  test('SitemapPublic: списки slug + id для SSG', () {
     final json = {
-      'scenarioSlugs': ['vecherinka', 'semya'],
-      'gameSlugs': ['munchkin'],
+      'scenarioEntries': [
+        {'slug': 'vecherinka', 'id': 'vecherinka'},
+        {'slug': 'semya', 'id': 'semya'},
+      ],
+      'gameEntries': [
+        {'slug': 'munchkin', 'id': 'munchkin'},
+      ],
       'contentVersion': 1,
       'updatedAt': '2026-09-03T08:00:00Z',
     };
 
     final sitemap = SitemapPublic.fromJson(json);
-    expect(sitemap.scenarioSlugs, equals(['vecherinka', 'semya']));
-    expect(sitemap.gameSlugs, equals(['munchkin']));
+    expect(sitemap.scenarioEntries.length, equals(2));
+    expect(sitemap.scenarioEntries[0].slug, equals('vecherinka'));
+    expect(sitemap.scenarioEntries[0].id, equals('vecherinka'));
+    expect(sitemap.gameEntries.length, equals(1));
+    expect(sitemap.gameEntries[0].slug, equals('munchkin'));
 
     final round = SitemapPublic.fromJson(sitemap.toJson());
     expect(round.toJson(), equals(sitemap.toJson()));

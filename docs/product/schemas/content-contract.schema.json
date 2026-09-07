@@ -185,10 +185,32 @@
     "sitemapPublic": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["scenarioSlugs", "gameSlugs", "contentVersion", "updatedAt"],
+      "required": ["scenarioEntries", "gameEntries", "contentVersion", "updatedAt"],
       "properties": {
-        "scenarioSlugs": {"type": "array", "items": {"type": "string"}},
-        "gameSlugs": {"type": "array", "items": {"type": "string"}},
+        "scenarioEntries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["slug", "id"],
+            "properties": {
+              "slug": {"type": "string"},
+              "id": {"type": "string"}
+            }
+          }
+        },
+        "gameEntries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["slug", "id"],
+            "properties": {
+              "slug": {"type": "string"},
+              "id": {"type": "string"}
+            }
+          }
+        },
         "contentVersion": {"$ref": "#/definitions/contentVersion"},
         "updatedAt": {"$ref": "#/definitions/updatedAt"}
       }

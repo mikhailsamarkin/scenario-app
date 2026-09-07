@@ -143,13 +143,16 @@ async function buildVitrine(db) {
   return entries.map((e) => e.card);
 }
 
-// Собирает scenarioSlugs для sitemap_public/main (A-10b, A-10d).
-async function buildScenarioSlugs(db) {
+// Собирает scenarioEntries (slug + id) для sitemap_public/main (A-10b, A-10d.
+// slug — ЧПУ для URL (A-23); id — ключ документа scenario_public/{id} (A-24.
+async function buildScenarioEntries(db) {
   const scenariosSnap = await db
     .collection('scenarios')
     .where('published', '==', true)
     .get();
-  return scenariosSnap.docs.map((d) => d.data().slug).sort();
+  return scenariosSnap.docs
+    .map((d) => ({ slug: d.data().slug, id: d.id }))
+    .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 // Собирает GameScenarioRef для game_public.scenarios (A-12, §4.5 SP-E0-01).
@@ -364,8 +367,8 @@ async function publishScenario({ project, file, dryRun }) {
     }
   }
 
-  // 8. Зависимые агрегаты: home_feed/main.vitrine и sitemap_public/main.scenarioSlugs
-  //    (A-12, A-10b, A-44). Запись по полям сохраняет carousel (игры) и gameSlugs.
+  // 8. Зависимые агрегаты: home_feed/main.vitrine и sitemap_public/main.scenarioEntries
+  //    (A-12, A-10b, A-44). Запись по полям сохраняет carousel (игры) и gameEntries.
   const homeRef = db.doc('home_feed/main');
   const sitemapRef = db.doc('sitemap_public/main');
   const homeSnap = await homeRef.get();
@@ -373,15 +376,15 @@ async function publishScenario({ project, file, dryRun }) {
   const home = homeSnap.exists ? homeSnap.data() : { carousel: [], vitrine: [], groups: [] };
   const sitemap = sitemapSnap.exists
     ? sitemapSnap.data()
-    : { scenarioSlugs: [], gameSlugs: [] };
+    : { scenarioEntries: [], gameEntries: [] };
   const homeNextVersion = (home.contentVersion ?? 0) + 1;
 
   const vitrine = await buildVitrine(db);
-  const scenarioSlugs = await buildScenarioSlugs(db);
+  const scenarioEntries = await buildScenarioEntries(db);
 
   if (dryRun) {
     console.log(`[dry-run] set home_feed/main (vitrine=${vitrine.length})`);
-    console.log(`[dry-run] set sitemap_public/main (scenarioSlugs=${scenarioSlugs.length})`);
+    console.log(`[dry-run] set sitemap_public/main (scenarioEntries=${scenarioEntries.length})`);
   } else {
     await homeRef.set({
       ...home,
@@ -393,11 +396,11 @@ async function publishScenario({ project, file, dryRun }) {
 
     await sitemapRef.set({
       ...sitemap,
-      scenarioSlugs,
+      scenarioEntries,
       contentVersion: homeNextVersion,
       updatedAt: now,
     });
-    console.log(`written sitemap_public/main (scenarioSlugs=${scenarioSlugs.length})`);
+    console.log(`written sitemap_public/main (scenarioEntries=${scenarioEntries.length})`);
   }
 
   // 9. Очередь уведомлений (A-31/A-33, SP-E1-05): только при первой публикации.

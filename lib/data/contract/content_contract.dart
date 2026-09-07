@@ -11,7 +11,7 @@
 
 /// Версия контракта данных. Растёт при несовместимых изменениях схемы
 /// (связка с A-44 contentVersion / content_schema_version).
-const int kContentContractVersion = 1;
+const int kContentContractVersion = 2;
 
 /// Пути коллекций-источников правды (закрыты для клиентского read).
 abstract final class SourceCollections {

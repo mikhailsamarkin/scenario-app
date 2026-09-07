@@ -136,7 +136,7 @@ async function ensureAggregates(db) {
   const home = homeSnap.exists ? homeSnap.data() : { carousel: [], vitrine: [], groups: [] };
   const sitemap = sitemapSnap.exists
     ? sitemapSnap.data()
-    : { scenarioSlugs: [], gameSlugs: [] };
+    : { scenarioEntries: [], gameEntries: [] };
   return { homeRef, sitemapRef, home, sitemap };
 }
 
@@ -233,7 +233,7 @@ async function publishGame({ project, file, dryRun }) {
     console.log(`written game_public/${game.id}`);
   }
 
-  // 7. Зависимые агрегаты: home_feed.carousel и sitemap_public.gameSlugs.
+  // 7. Зависимые агрегаты: home_feed.carousel и sitemap_public.gameEntries.
   const teaserSlides = game.carousel.filter((s) => s.frameType === 'teaser');
   const homeCarousel = [...(home.carousel ?? [])];
   for (const slide of teaserSlides) {
@@ -241,12 +241,14 @@ async function publishGame({ project, file, dryRun }) {
       homeCarousel.push(slide);
     }
   }
-  const gameSlugs = [...(sitemap.gameSlugs ?? [])];
-  if (!gameSlugs.includes(game.slug)) gameSlugs.push(game.slug);
+  const gameEntries = [...(sitemap.gameEntries ?? [])];
+  if (!gameEntries.some((e) => e.slug === game.slug))) {
+    gameEntries.push({ slug: game.slug, id: game.id });
+  }
 
   if (dryRun) {
     console.log(`[dry-run] set home_feed/main (carousel=${homeCarousel.length})`);
-    console.log(`[dry-run] set sitemap_public/main (gameSlugs=${gameSlugs.length})`);
+    console.log(`[dry-run] set sitemap_public/main (gameEntries=${gameEntries.length})`);
     console.log('DRY-RUN OK: запись не выполнялась');
     process.exit(0);
   }
@@ -261,11 +263,11 @@ async function publishGame({ project, file, dryRun }) {
 
   await sitemapRef.set({
     ...sitemap,
-    gameSlugs,
+    gameEntries,
     contentVersion: nextVersion,
     updatedAt: now,
   });
-  console.log(`written sitemap_public/main (gameSlugs=${gameSlugs.length})`);
+  console.log(`written sitemap_public/main (gameEntries=${gameEntries.length})`);
 
   console.log(`OK: игра ${game.id} опубликована (${project})`);
 }

@@ -472,38 +472,57 @@ class GamePublic {
   }
 }
 
+/// Пара «slug, id» опубликованного сценария/игры для SSG (A-10b, A-10d).
+/// slug — ЧПУ для URL (A-23); id — ключ документа `*_public/{id}` (A-24, A-13).
+/// Иммьютабелен (все поля final).
+class SitemapEntry {
+  const SitemapEntry({required this.slug, required this.id});
+
+  factory SitemapEntry.fromJson(Map<String, dynamic> json) {
+    return SitemapEntry(
+      slug: json['slug'] as String,
+      id: json['id'] as String,
+    );
+  }
+
+  final String slug;
+  final String id;
+
+  Map<String, dynamic> toJson() => {'slug': slug, 'id': id};
+}
+
 /// Публичный агрегат `sitemap_public/main` (§4.6) — список опубликованных
-/// slug для SSG (A-10b, A-10d), без N+1 по коллекциям.
+/// сценариев и игр (slug + id) для SSG (A-10b, A-10d), без N+1 по коллекциям.
 /// Иммьютабелен (все поля final).
 class SitemapPublic {
   const SitemapPublic({
-    required this.scenarioSlugs,
-    required this.gameSlugs,
+    required this.scenarioEntries,
+    required this.gameEntries,
     required this.contentVersion,
     required this.updatedAt,
   });
 
   factory SitemapPublic.fromJson(Map<String, dynamic> json) {
     return SitemapPublic(
-      scenarioSlugs: (json['scenarioSlugs'] as List<dynamic>)
-          .map((e) => e as String)
+      scenarioEntries: (json['scenarioEntries'] as List<dynamic>)
+          .map((e) => SitemapEntry.fromJson(e as Map<String, dynamic>))
           .toList(growable: false),
-      gameSlugs: (json['gameSlugs'] as List<dynamic>)
-          .map((e) => e as String)
+      gameEntries: (json['gameEntries'] as List<dynamic>)
+          .map((e) => SitemapEntry.fromJson(e as Map<String, dynamic>))
           .toList(growable: false),
       contentVersion: json['contentVersion'] as int,
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
-  final List<String> scenarioSlugs;
-  final List<String> gameSlugs;
+  final List<SitemapEntry> scenarioEntries;
+  final List<SitemapEntry> gameEntries;
   final int contentVersion;
   final DateTime updatedAt;
 
   Map<String, dynamic> toJson() => {
-        'scenarioSlugs': scenarioSlugs,
-        'gameSlugs': gameSlugs,
+        'scenarioEntries': scenarioEntries.map((e) => e.toJson()).toList(growable: false),
+        'gameEntries': gameEntries.map((e) => e.toJson()).toList(growable: false),
         'contentVersion': contentVersion,
         'updatedAt': updatedAt.toIso8601String(),
       };
