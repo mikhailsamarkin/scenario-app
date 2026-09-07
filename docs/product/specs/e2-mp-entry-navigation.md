@@ -2,7 +2,7 @@
 spec_id: SP-E2-07
 title: "Спецификация реализации: склейка МП — точка входа и навигация Home → Scenario → Game"
 story_id: US-E2-07
-status: drafted
+status: approved
 updated: "2026-09-07"
 ---
 # Спецификация реализации — US-E2-07 «Склейка МП: точка входа и навигация»

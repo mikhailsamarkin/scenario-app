@@ -2,7 +2,7 @@
 spec_id: SP-E3-04
 title: "Спецификация реализации: deep link из push на экран сценария"
 story_id: US-E3-04
-status: drafted
+status: approved
 updated: "2026-09-07"
 ---
 # Спецификация реализации — US-E3-04 «Deep link из push на экран сценария»
