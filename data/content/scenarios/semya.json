@@ -1,0 +1,23 @@
+{
+  "id": "semya",
+  "slug": "semya",
+  "title": "Семейный вечер",
+  "subtitle": "Игры для всей семьи",
+  "whyTheseGames": "Простые правила и короткие партии — идеально для семейного вечера.",
+  "seoTitle": "Семейный вечер — подборка настольных игр",
+  "seoDescription": "Настольные игры для всей семьи: простые правила и короткие партии.",
+  "shareTitle": "Семейный вечер: настолки для всей семьи",
+  "shareText": "Подборка игр, в которые можно играть с детьми и бабушками.",
+  "shareImageUrl": "images/share.jpg",
+  "published": true,
+  "publishedAt": "2026-09-07T08:00:00Z",
+  "onHomeVitrine": true,
+  "vitrineOrder": 2,
+  "games": [
+    {
+      "gameId": "codenames",
+      "order": 1,
+      "shortDescription": "Игра, в которую можно играть с детьми и бабушками."
+    }
+  ]
+}

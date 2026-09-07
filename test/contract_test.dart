@@ -75,6 +75,7 @@ void main() {
       'slug': 'vecherinka',
       'title': 'Вечеринка',
       'whyTheseGames': 'Почему эти игры',
+      'seoTitle': 'Вечеринка — подборка настольных игр',
       'games': [
         {
           'gameId': 'g1',
@@ -109,6 +110,8 @@ void main() {
       'id': 'g1',
       'slug': 'munchkin',
       'title': 'Манчкин',
+      'seoTitle': 'Манчкин — карточная игра про подземелья',
+      'seoDescription': 'Юмористическая карточная игра про приключения в подземелье.',
       'playersHint': 'players_2_6',
       'durationBucket': 'evening',
       'ageHint': 'age_adults',
@@ -158,11 +161,41 @@ void main() {
   test('неизвестный enum-ключ бросает ошибку (TC-04)', () {
     expect(
       () => PlayersHint.fromStorageKey('players_9'),
-      throwsA(ArgumentError),
+      throwsA(isA<ArgumentError>()),
     );
     expect(
       () => FrameType.fromStorageKey('unknown'),
-      throwsA(ArgumentError),
+      throwsA(isA<ArgumentError>()),
     );
+  });
+
+  test('ScenarioPublic: отсутствие обязательного seoTitle бросает ошибку (SP-E1-04)', () {
+    final json = {
+      'id': 's1',
+      'slug': 'vecherinka',
+      'title': 'Вечеринка',
+      'whyTheseGames': 'Почему эти игры',
+      'games': <Map<String, dynamic>>[],
+      'contentVersion': 1,
+      'updatedAt': '2026-09-03T08:00:00Z',
+    };
+    expect(() => ScenarioPublic.fromJson(json), throwsA(anything));
+  });
+
+  test('GamePublic: отсутствие обязательных seoTitle/seoDescription бросает ошибку (SP-E1-04)', () {
+    final json = {
+      'id': 'g1',
+      'slug': 'munchkin',
+      'title': 'Манчкин',
+      'playersHint': 'players_2_6',
+      'durationBucket': 'evening',
+      'ageHint': 'age_adults',
+      'rulesComplexity': 'normal',
+      'carousel': <Map<String, dynamic>>[],
+      'scenarios': <Map<String, dynamic>>[],
+      'contentVersion': 1,
+      'updatedAt': '2026-09-03T08:00:00Z',
+    };
+    expect(() => GamePublic.fromJson(json), throwsA(anything));
   });
 }

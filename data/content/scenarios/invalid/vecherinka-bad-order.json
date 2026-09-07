@@ -1,0 +1,19 @@
+{
+  "id": "vecherinka-bad-order",
+  "slug": "vecherinka-bad-order",
+  "title": "Вечеринка (невалидный порядок)",
+  "whyTheseGames": "Невалидная фикстура для проверки дублей order.",
+  "published": true,
+  "games": [
+    {
+      "gameId": "munchkin",
+      "order": 1,
+      "shortDescription": "Первая игра."
+    },
+    {
+      "gameId": "munchkin",
+      "order": 1,
+      "shortDescription": "Дубль order=1 и дубль gameId."
+    }
+  ]
+}

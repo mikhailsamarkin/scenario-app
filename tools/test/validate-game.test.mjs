@@ -16,6 +16,8 @@ function validGame(overrides = {}) {
     id: 'g1',
     slug: 'game-1',
     title: 'Игра 1',
+    seoTitle: 'Игра 1 — настольная игра для компании',
+    seoDescription: 'Краткое описание игры для страницы и поисковой выдачи.',
     playersHint: 'players_2_4',
     durationBucket: 'short',
     ageHint: 'age_family',
@@ -101,7 +103,7 @@ test('TC-03: все допустимые enum-ключи проходят', () =
 });
 
 test('A-30: отсутствие обязательных полей отклоняется', () => {
-  for (const field of ['id', 'slug', 'title', 'playersHint', 'durationBucket', 'ageHint', 'rulesComplexity']) {
+  for (const field of ['id', 'slug', 'title', 'seoTitle', 'seoDescription', 'playersHint', 'durationBucket', 'ageHint', 'rulesComplexity']) {
     const game = validGame();
     delete game[field];
     const result = validateGame(game);
@@ -111,6 +113,18 @@ test('A-30: отсутствие обязательных полей откло�
       `${field}: ожидалась ошибка по полю, получено: ${result.errors.join('; ')}`,
     );
   }
+});
+
+test('SP-E1-04: seoTitle/seoDescription с Markdown отклоняются (A-4a)', () => {
+  const result = validateGame(validGame({ seoTitle: 'Заголовок **жирным**' }));
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((e) => e.includes('seoTitle') && e.includes('plain text')));
+});
+
+test('SP-E1-04: превышение лимита длины seoTitle/seoDescription отклоняется', () => {
+  const result = validateGame(validGame({ seoDescription: 'x'.repeat(161) }));
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((e) => e.includes('seoDescription') && e.includes('160')));
 });
 
 test('A-4a: markdown в текстовых полях отклоняется', () => {

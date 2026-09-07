@@ -2,6 +2,8 @@
   "id": "munchkin",
   "slug": "munchkin",
   "title": "Манчкин",
+  "seoTitle": "Манчкин — карточная игра про подземелья",
+  "seoDescription": "Юмористическая карточная игра про приключения в подземелье: сражайтесь с монстрами, собирайте сокровища и мешайте друзьям.",
   "playersHint": "players_2_6",
   "durationBucket": "evening",
   "ageHint": "age_adults",

@@ -281,7 +281,7 @@ class ScenarioPublic {
     required this.title,
     this.subtitle,
     required this.whyTheseGames,
-    this.seoTitle,
+    required this.seoTitle,
     this.seoDescription,
     this.shareTitle,
     this.shareText,
@@ -300,7 +300,7 @@ class ScenarioPublic {
       title: json['title'] as String,
       subtitle: json['subtitle'] as String?,
       whyTheseGames: json['whyTheseGames'] as String,
-      seoTitle: json['seoTitle'] as String?,
+      seoTitle: json['seoTitle'] as String,
       seoDescription: json['seoDescription'] as String?,
       shareTitle: json['shareTitle'] as String?,
       shareText: json['shareText'] as String?,
@@ -324,7 +324,7 @@ class ScenarioPublic {
   final String title;
   final String? subtitle;
   final String whyTheseGames;
-  final String? seoTitle;
+  final String seoTitle;
   final String? seoDescription;
   final String? shareTitle;
   final String? shareText;
@@ -394,8 +394,8 @@ class GamePublic {
     required this.id,
     required this.slug,
     required this.title,
-    this.seoTitle,
-    this.seoDescription,
+    required this.seoTitle,
+    required this.seoDescription,
     required this.playersHint,
     required this.durationBucket,
     required this.ageHint,
@@ -411,8 +411,8 @@ class GamePublic {
       id: json['id'] as String,
       slug: json['slug'] as String,
       title: json['title'] as String,
-      seoTitle: json['seoTitle'] as String?,
-      seoDescription: json['seoDescription'] as String?,
+      seoTitle: json['seoTitle'] as String,
+      seoDescription: json['seoDescription'] as String,
       playersHint: PlayersHint.fromStorageKey(json['playersHint'] as String),
       durationBucket: DurationBucket.fromStorageKey(
         json['durationBucket'] as String,
@@ -435,8 +435,8 @@ class GamePublic {
   final String id;
   final String slug;
   final String title;
-  final String? seoTitle;
-  final String? seoDescription;
+  final String seoTitle;
+  final String seoDescription;
   final PlayersHint playersHint;
   final DurationBucket durationBucket;
   final AgeHint ageHint;

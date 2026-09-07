@@ -29,12 +29,20 @@ export const REQUIRED_FIELDS = Object.freeze([
   'id',
   'slug',
   'title',
+  'seoTitle',
+  'seoDescription',
   'playersHint',
   'durationBucket',
   'ageHint',
   'rulesComplexity',
   'carousel',
 ]);
+
+// SEO-поля: лимиты длин по content-intake (SP-E1-04).
+export const SEO_LIMITS = Object.freeze({
+  seoTitle: 60,
+  seoDescription: 160,
+});
 
 // Разрешённые MIME-типы изображений (лимит бакета games, SP-E0-02).
 export const ALLOWED_IMAGE_MIME = Object.freeze([
@@ -85,6 +93,16 @@ export function validateGame(json) {
   for (const field of REQUIRED_FIELDS) {
     if (!isNonEmptyString(json[field]) && field !== 'carousel') {
       errors.push(`${field}: обязательное поле (A-30)`);
+    }
+  }
+
+  // SEO-поля (SP-E1-04): plain text (A-4a) и лимиты длин (ED-9).
+  for (const field of ['seoTitle', 'seoDescription']) {
+    if (json[field] !== undefined && !isPlainText(json[field])) {
+      errors.push(`${field}: plain text, без Markdown/HTML (A-4a)`);
+    }
+    if (json[field] !== undefined && json[field].length > SEO_LIMITS[field]) {
+      errors.push(`${field}: длина не более ${SEO_LIMITS[field]} символов (SP-E1-04)`);
     }
   }
 
@@ -146,3 +164,9 @@ export function run(argv = process.argv.slice(2)) {
 // ESM-совместимый require для чтения файла в CLI.
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
+
+// Запуск CLI при прямом выполнении (node validate-game.mjs <file>).
+import { pathToFileURL } from 'node:url';
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  run();
+}

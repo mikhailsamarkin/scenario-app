@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Инструменты импорта контента Scenario (SP-E1-01): валидация и публикация игр в Firestore + Supabase Storage.",
+  "description": "Инструменты импорта контента Scenario (SP-E1-01, SP-E1-03): валидация и публикация игр и сценариев в Firestore + Supabase Storage.",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
     "validate": "node validate-game.mjs",
+    "validate:scenario": "node validate-scenario.mjs",
+    "import:dev": "node import-all.mjs --project dev",
     "test": "node --test test/"
   },
   "dependencies": {

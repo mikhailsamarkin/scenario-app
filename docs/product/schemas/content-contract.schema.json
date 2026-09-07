@@ -133,7 +133,7 @@
     "scenarioPublic": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "slug", "title", "whyTheseGames", "games", "contentVersion", "updatedAt"],
+      "required": ["id", "slug", "title", "whyTheseGames", "seoTitle", "games", "contentVersion", "updatedAt"],
       "properties": {
         "id": {"type": "string"},
         "slug": {"type": "string"},
@@ -155,7 +155,7 @@
     "gamePublic": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "slug", "title", "playersHint", "durationBucket", "ageHint", "rulesComplexity", "carousel", "scenarios", "contentVersion", "updatedAt"],
+      "required": ["id", "slug", "title", "seoTitle", "seoDescription", "playersHint", "durationBucket", "ageHint", "rulesComplexity", "carousel", "scenarios", "contentVersion", "updatedAt"],
       "properties": {
         "id": {"type": "string"},
         "slug": {"type": "string"},

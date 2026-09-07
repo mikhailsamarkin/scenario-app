@@ -1,0 +1,15 @@
+{
+  "id": "vecherinka-bad-vitrine",
+  "slug": "vecherinka-bad-vitrine",
+  "title": "Вечеринка (невалидная витрина)",
+  "whyTheseGames": "Невалидная фикстура для проверки витрины: onHomeVitrine без vitrineOrder.",
+  "published": true,
+  "onHomeVitrine": true,
+  "games": [
+    {
+      "gameId": "munchkin",
+      "order": 1,
+      "shortDescription": "Первая игра."
+    }
+  ]
+}

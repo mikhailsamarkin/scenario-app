@@ -131,9 +131,21 @@ node scenario/tools/import-games.mjs --project dev scenario/data/content/games/m
 - Изображения доступны по публичным URL Supabase Storage (A-39).
 - Деплой правил в прод — ADR-011 (до деплоя Firestore закрыт целиком).
 
-### CI-импорт
+### Импорт всех фикстур разом
 
-Workflow `scenario/.github/workflows/import-content.yml` автоматически валидирует фикстуры из `data/content/games/` и импортирует их на dev-проект при пуше в эти пути. Секреты — из GitHub Secrets (A-40).
+Если нужно опубликовать (или обновить) все игры из `data/content/games/` сразу — `tools/import-all.mjs` валидирует каждую фикстуру (без секретов) и импортирует её на выбранный проект:
+
+```bash
+FIREBASE_SERVICE_ACCOUNT_PATH=/path/to/service-account.json \
+SUPABASE_URL=https://<project>.supabase.co \
+SUPABASE_SERVICE_ROLE_KEY=<key> \
+node scenario/tools/import-all.mjs --project dev --dry-run
+```
+
+- Сначала попробуй с `--dry-run` — пройдёт валидация и покажет план импорта, ничего не записав.
+- То же через npm-скрипт (без `--dry-run`): `cd scenario/tools && npm run import:dev`.
+- Фикстуры из `data/content/games/invalid/` в импорт не попадают.
+- Импорт выполняется локально (не в CI); секреты — из env (A-40).
 
 ## FAQ
 

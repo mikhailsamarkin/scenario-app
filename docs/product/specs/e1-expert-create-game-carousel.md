@@ -2,8 +2,8 @@
 spec_id: SP-E1-01
 title: "Спецификация реализации: создание игры с каруселью и валидацией полей"
 story_id: US-E1-01
-status: drafted
-updated: "2026-09-06"
+status: approved
+updated: "2026-09-07"
 ---
 # Спецификация реализации — US-E1-01 «Создание игры с каруселью и валидацией полей»
 
@@ -158,7 +158,7 @@ flowchart TD
 
 * Переменные окружения (вне git, A-40): `FIREBASE_SERVICE_ACCOUNT_PATH` (путь к service account key), `SUPABASE_URL` и `SUPABASE_SERVICE_ROLE_KEY` (по окружению dev/prod).
 
-* Структура: `tools/validate-game.mjs` — валидатор (enum-allowlist CR-4.1, карусель CR-5, обязательные поля A-30); `tools/import-games.mjs` — оркестратор (валидация → upload → запись → сборка агрегатов).
+* Структура: `tools/validate-game.mjs` — валидатор (enum-allowlist CR-4.1, карусель CR-5, обязательные поля A-30); `tools/import-games.mjs` — оркестратор одной игры (валидация → upload → запись → сборка агрегатов); `tools/import-all.mjs` — оркестратор всех фикстур (валидация → импорт каждой).
 
 * Команды: `node tools/import-games.mjs --project dev data/content/games/<id>.json` (и `--project prod`); флаг `--dry-run` — проверка без записи.
 
@@ -199,7 +199,7 @@ flowchart TD
 
 Существующие контрактные тесты `scenario/test/contract_test.dart` (строгий парсинг `GamePublic`, enum-ключи, round-trip) — база для TC-03/TC-04 на стороне Flutter.
 
-**CI-прогон импорта на dev-проекте:** в CI (GitHub Actions) на dev-проекте `scenario-ba26a` выполняется `node tools/import-games.mjs --project dev data/content/games/<id>.json` с фикстурами из `data/content/games/` (заметка TC-01). Секреты — из GitHub Secrets (A-40); прогон идемпотентен и не требует ручных действий.
+**Локальный прогон импорта на dev-проекте:** `tools/import-all.mjs` валидирует все фикстуры из `data/content/games/` (кроме `invalid/`) без секретов, затем импортирует каждую на dev-проект `scenario-ba26a` через `import-games.mjs` (заметка TC-01). Один вызов: `node tools/import-all.mjs --project dev [--dry-run]` или `npm run import:dev` (в `tools/`). Секреты — из env (A-40); прогон идемпотентен и не требует ручных действий. Импорт из CI (GitHub Actions) не выполняется.
 
 **Smoke и регресс:** smoke-набор — TC-01, TC-04; полный регресс — TC-01..TC-04 при изменении контракта карусели или enum (по тест-кейсам US-E1-01).
 
@@ -223,7 +223,7 @@ flowchart TD
 
 * `scenario/test/contract_test.dart` — контрактные тесты (существуют).
 
-* `.github/workflows/import-content.yml` (предлагается) — CI-прогон импорта фикстур на dev-проекте (TC-01).
+* `tools/import-all.mjs` (предлагается) — локальный оркестратор импорта всех фикстур на dev (замена CI-прогона, TC-01).
 
 ## 6. Риски
 

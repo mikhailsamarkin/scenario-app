@@ -1,0 +1,24 @@
+{
+  "id": "codenames",
+  "slug": "codenames",
+  "title": "Кодовые имена",
+  "seoTitle": "Кодовые имена — ассоциативная игра для компании",
+  "seoDescription": "Ассоциативная настольная игра на скорость для большой компании: объясняйте слова по подсказкам и находите своих агентов.",
+  "playersHint": "players_2_6",
+  "durationBucket": "short",
+  "ageHint": "age_family",
+  "rulesComplexity": "easy",
+  "carousel": [
+    {
+      "imageRef": "images/teaser.jpg",
+      "frameType": "teaser",
+      "caption": "Карточки Кодовых имён",
+      "alt": "Карточки слов для игры Кодовые имена"
+    },
+    {
+      "imageRef": "images/box.jpg",
+      "frameType": "box",
+      "alt": "Коробка игры Кодовые имена"
+    }
+  ]
+}
