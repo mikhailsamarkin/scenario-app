@@ -242,7 +242,7 @@ async function publishGame({ project, file, dryRun }) {
     }
   }
   const gameEntries = [...(sitemap.gameEntries ?? [])];
-  if (!gameEntries.some((e) => e.slug === game.slug))) {
+  if (!gameEntries.some((e) => e.slug === game.slug)) {
     gameEntries.push({ slug: game.slug, id: game.id });
   }
 
