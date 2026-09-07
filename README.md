@@ -45,3 +45,14 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+# Android dev
+./run_android_emulator.sh dev --build
+# Android prod
+./run_android_emulator.sh prod --build
+
+# iOS dev
+./run_ios_simulator.sh dev --build
+# iOS prod
+./run_ios_simulator.sh prod --build
