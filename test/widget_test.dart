@@ -5,11 +5,14 @@
 // ScenarioApp (точка входа + навигация) конструируется и рендерит онбординг
 // при первом запуске (флаг «пройден» не установлен).
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:scenario/app.dart';
 import 'package:scenario/data/contract/models.dart';
 import 'package:scenario/data/firestore/aggregate_repository_interface.dart';
+import 'package:scenario/features/push/push_deep_link_service.dart';
 
 /// Фейковый репозиторий с пустой витриной.
 class _EmptyRepository implements AggregateRepository {
@@ -29,10 +32,22 @@ class _EmptyRepository implements AggregateRepository {
   Future<SitemapPublic?> getSitemap() async => null;
 }
 
+/// Фейковый источник deep link (без уведомлений).
+class _NoDeepLinkSource implements PushDeepLinkSource {
+  @override
+  Future<String?> getInitialScenarioId() async => null;
+
+  @override
+  Stream<String?> onScenarioOpened() => const Stream.empty();
+}
+
 void main() {
   testWidgets('ScenarioApp строится и рендерит онбординг при первом запуске',
       (WidgetTester tester) async {
-    await tester.pumpWidget(ScenarioApp(repository: _EmptyRepository()));
+    await tester.pumpWidget(ScenarioApp(
+      repository: _EmptyRepository(),
+      deepLinkSource: _NoDeepLinkSource(),
+    ));
     await tester.pump();
 
     // При первом запуске (флаг не установлен) показывается онбординг.

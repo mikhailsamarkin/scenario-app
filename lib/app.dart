@@ -4,6 +4,8 @@
 // (A-11, A-38) и Navigator'ом. Колбэки экранов (onOpenScenario/onOpenGame)
 // переводят на соответствующие экраны через Navigator.push.
 
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -13,14 +15,22 @@ import 'features/home/home_screen.dart';
 import 'features/onboarding/onboarding_prefs.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/onboarding/push_subscription_service.dart';
+import 'features/push/push_deep_link_service.dart';
 import 'features/scenario/scenario_screen.dart';
 
 /// Корневой виджет приложения с навигацией (A-15).
 class ScenarioApp extends StatefulWidget {
-  const ScenarioApp({super.key, required this.repository});
+  const ScenarioApp({
+    super.key,
+    required this.repository,
+    this.deepLinkSource,
+  });
 
   /// Источник данных (в боевом коде — Firestore, A-11/A-38).
   final AggregateRepository repository;
+
+  /// Источник deep link из push (для тестируемости; по умолчанию — FCM).
+  final PushDeepLinkSource? deepLinkSource;
 
   @override
   State<ScenarioApp> createState() => _ScenarioAppState();
@@ -28,11 +38,51 @@ class ScenarioApp extends StatefulWidget {
 
 class _ScenarioAppState extends State<ScenarioApp> {
   late Future<bool> _onboardingFuture;
+  late final PushDeepLinkService _deepLinkService;
+  StreamSubscription<String?>? _deepLinkSub;
 
   @override
   void initState() {
     super.initState();
     _onboardingFuture = isOnboardingCompleted();
+    _deepLinkService = PushDeepLinkService(
+      widget.deepLinkSource ??
+          FirebaseMessagingDeepLinkSource(FirebaseMessaging.instance),
+    );
+    _listenDeepLinks();
+  }
+
+  @override
+  void dispose() {
+    _deepLinkSub?.cancel();
+    super.dispose();
+  }
+
+  /// Обработка тапа по push: холодный старт (getInitialMessage) и фоновый
+  /// тап (onMessageOpenedApp) → навигация на экран сценария (AC-01, AC-02).
+  void _listenDeepLinks() {
+    _deepLinkService.getInitialScenarioId().then((scenarioId) {
+      if (scenarioId != null && mounted) {
+        _openScenario(scenarioId);
+      }
+    });
+    _deepLinkSub = _deepLinkService.onScenarioOpened().listen((scenarioId) {
+      if (scenarioId != null && mounted) {
+        _openScenario(scenarioId);
+      }
+    });
+  }
+
+  void _openScenario(String scenarioId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => _ScenarioRoute(
+          scenarioId: scenarioId,
+          repository: widget.repository,
+        ),
+      ),
+    );
   }
 
   @override
