@@ -1,8 +1,9 @@
 // Базовый smoke-тест: корневой виджет приложения строится без ошибок.
 //
-// Полноценные сценарии экранов покрыты в home/scenario/game_screen_test.dart
-// с фейковым репозиторием; здесь проверяется только, что ScenarioApp
-// (точка входа + навигация) конструируется и рендерит главный экран.
+// Полноценные сценарии экранов покрыты в home/scenario/game/onboarding
+// _screen_test.dart с фейковым репозиторием; здесь проверяется только, что
+// ScenarioApp (точка входа + навигация) конструируется и рендерит онбординг
+// при первом запуске (флаг «пройден» не установлен).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,12 +31,12 @@ class _EmptyRepository implements AggregateRepository {
 }
 
 void main() {
-  testWidgets('ScenarioApp строится и рендерит главный экран',
+  testWidgets('ScenarioApp строится и рендерит онбординг при первом запуске',
       (WidgetTester tester) async {
     await tester.pumpWidget(ScenarioApp(repository: _EmptyRepository()));
     await tester.pump();
 
-    // Заголовок главного экрана (витрина) присутствует.
-    expect(find.text('Сценарии'), findsOneWidget);
+    // При первом запуске (флаг не установлен) показывается онбординг.
+    expect(find.text('Добро пожаловать'), findsOneWidget);
   });
 }

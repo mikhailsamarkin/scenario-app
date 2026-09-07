@@ -11,19 +11,69 @@ import 'data/firestore/aggregate_repository.dart';
 import 'data/firestore/aggregate_repository_interface.dart';
 import 'features/game/game_screen.dart';
 import 'features/home/home_screen.dart';
+import 'features/onboarding/onboarding_prefs.dart';
+import 'features/onboarding/onboarding_screen.dart';
 import 'features/scenario/scenario_screen.dart';
 
 /// Корневой виджет приложения с навигацией (A-15).
-class ScenarioApp extends StatelessWidget {
+class ScenarioApp extends StatefulWidget {
   const ScenarioApp({super.key, required this.repository});
 
   /// Источник данных (в боевом коде — Firestore, A-11/A-38).
   final AggregateRepository repository;
 
   @override
+  State<ScenarioApp> createState() => _ScenarioAppState();
+}
+
+class _ScenarioAppState extends State<ScenarioApp> {
+  late Future<bool> _onboardingFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _onboardingFuture = isOnboardingCompleted();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: _HomeRoute(repository: repository),
+      home: FutureBuilder<bool>(
+        future: _onboardingFuture,
+        builder: (context, snapshot) {
+          final completed = snapshot.data ?? false;
+          if (completed) {
+            return _HomeRoute(repository: widget.repository);
+          }
+          return _OnboardingRoute(
+            repository: widget.repository,
+            onCompleted: (context) {
+              markOnboardingCompleted();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => _HomeRoute(repository: widget.repository),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Маршрут онбординга первого запуска.
+class _OnboardingRoute extends StatelessWidget {
+  const _OnboardingRoute({required this.repository, required this.onCompleted});
+
+  final AggregateRepository repository;
+  final OnboardingCompleted onCompleted;
+
+  @override
+  Widget build(BuildContext context) {
+    return OnboardingScreen(
+      onCompleted: onCompleted,
     );
   }
 }
