@@ -19,6 +19,11 @@ import { readFileSync, existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
 import { validateScenario } from './validate-scenario.mjs';
+import {
+  isFirstPublication,
+  buildDailyQueueRecord,
+  validateQueueRecord,
+} from './notification-queue.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -205,6 +210,14 @@ async function publishScenario({ project, file, dryRun }) {
 
   const now = nowIso();
 
+  // 3.5. Определить «первую публикацию» для очереди уведомлений (A-31/A-33).
+  //      previous — существующий документ scenarios/{id} (если есть).
+  const existingScenarioSnap = await db.doc(`scenarios/${scenario.id}`).get();
+  const previousScenario = existingScenarioSnap.exists
+    ? existingScenarioSnap.data()
+    : null;
+  const firstPublication = isFirstPublication(previousScenario, scenario);
+
   // 4. Запись источника правды scenarios/{id}.
   const scenarioDoc = {
     id: scenario.id,
@@ -385,6 +398,24 @@ async function publishScenario({ project, file, dryRun }) {
       updatedAt: now,
     });
     console.log(`written sitemap_public/main (scenarioSlugs=${scenarioSlugs.length})`);
+  }
+
+  // 9. Очередь уведомлений (A-31/A-33, SP-E1-05): только при первой публикации.
+  //    Единая запись pending_notifications/daily перезаписывается последней (A-7a).
+  if (firstPublication) {
+    const queueRecord = buildDailyQueueRecord(scenario.id, now);
+    const queueValidation = validateQueueRecord(queueRecord);
+    if (!queueValidation.ok) {
+      fail(`Очередь уведомлений: ${queueValidation.errors.join('; ')}`);
+    }
+    if (dryRun) {
+      console.log(`[dry-run] set pending_notifications/daily (lastScenarioId=${scenario.id})`);
+    } else {
+      await db.doc('pending_notifications/daily').set(queueRecord);
+      console.log(`written pending_notifications/daily (lastScenarioId=${scenario.id})`);
+    }
+  } else {
+    console.log(`SKIP: сценарий ${scenario.id} не первая публикация — очередь не обновляется (A-33)`);
   }
 
   console.log(`OK: сценарий ${scenario.id} опубликован (${project})`);

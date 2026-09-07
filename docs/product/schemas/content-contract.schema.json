@@ -10,7 +10,8 @@
     {"$ref": "#/definitions/semanticGroupPublic"},
     {"$ref": "#/definitions/scenarioPublic"},
     {"$ref": "#/definitions/gamePublic"},
-    {"$ref": "#/definitions/sitemapPublic"}
+    {"$ref": "#/definitions/sitemapPublic"},
+    {"$ref": "#/definitions/pendingNotificationDaily"}
   ],
   "definitions": {
     "playersHint": {
@@ -169,6 +170,15 @@
         "carousel": {"type": "array", "items": {"$ref": "#/definitions/slide"}},
         "scenarios": {"type": "array", "items": {"$ref": "#/definitions/gameScenarioRef"}},
         "contentVersion": {"$ref": "#/definitions/contentVersion"},
+        "updatedAt": {"$ref": "#/definitions/updatedAt"}
+      }
+    },
+    "pendingNotificationDaily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lastScenarioId", "updatedAt"],
+      "properties": {
+        "lastScenarioId": {"type": "string"},
         "updatedAt": {"$ref": "#/definitions/updatedAt"}
       }
     },
