@@ -4,6 +4,7 @@
 // (A-11, A-38) и Navigator'ом. Колбэки экранов (onOpenScenario/onOpenGame)
 // переводят на соответствующие экраны через Navigator.push.
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'data/firestore/aggregate_repository_interface.dart';
@@ -11,6 +12,7 @@ import 'features/game/game_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/onboarding/onboarding_prefs.dart';
 import 'features/onboarding/onboarding_screen.dart';
+import 'features/onboarding/push_subscription_service.dart';
 import 'features/scenario/scenario_screen.dart';
 
 /// Корневой виджет приложения с навигацией (A-15).
@@ -72,6 +74,12 @@ class _OnboardingRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return OnboardingScreen(
       onCompleted: onCompleted,
+      onAllowPush: () async {
+        final service = PushSubscriptionService(
+          FirebaseMessagingAdapter(FirebaseMessaging.instance),
+        );
+        await service.subscribeToNewScenarios();
+      },
     );
   }
 }

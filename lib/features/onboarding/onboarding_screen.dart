@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 /// Колбэк завершения онбординга (переход к витрине).
 typedef OnboardingCompleted = void Function(BuildContext context);
 
+/// Колбэк «Разрешить уведомления» (подписка на topic, US-E3-02).
+typedef OnboardingAllowPush = Future<void> Function();
+
 /// Шаг онбординга: заголовок + текст.
 class _OnboardingStep {
   const _OnboardingStep(this.title, this.body);
@@ -35,11 +38,15 @@ class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({
     super.key,
     required this.onCompleted,
+    this.onAllowPush,
     this.askPush = true,
   });
 
   /// Переход к витрине после завершения.
   final OnboardingCompleted onCompleted;
+
+  /// Подписка на уведомления при «Разрешить» (US-E3-02).
+  final OnboardingAllowPush? onAllowPush;
 
   /// Показывать ли шаг запроса push (опционально).
   final bool askPush;
@@ -61,7 +68,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
   }
 
-  void _finish(BuildContext context) {
+  void _finish() {
     widget.onCompleted(context);
   }
 
@@ -95,15 +102,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 24),
             if (_isPushStep) ...[
               FilledButton(
-                onPressed: () {
-                  _finish(context);
+                onPressed: () async {
+                  await widget.onAllowPush?.call();
+                  if (mounted) {
+                    _finish();
+                  }
                 },
                 child: const Text('Разрешить'),
               ),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () {
-                  _finish(context);
+                  _finish();
                 },
                 child: const Text('Позже'),
               ),
@@ -115,7 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () {
-                  _finish(context);
+                  _finish();
                 },
                 child: const Text('Пропустить'),
               ),
