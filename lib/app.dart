@@ -17,6 +17,7 @@ import 'features/onboarding/onboarding_screen.dart';
 import 'features/onboarding/push_subscription_service.dart';
 import 'features/push/push_deep_link_service.dart';
 import 'features/scenario/scenario_screen.dart';
+import 'features/share/share_scenario_service.dart';
 
 /// Корневой виджет приложения с навигацией (A-15).
 class ScenarioApp extends StatefulWidget {
@@ -174,9 +175,13 @@ class _ScenarioRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shareService = ShareScenarioService(SharePlusLauncher());
     return ScenarioScreen(
       scenarioId: scenarioId,
       repository: repository,
+      onShare: (scenario) {
+        shareService.shareScenario(scenario);
+      },
       onOpenGame: (context, gameId, scenarioId) {
         Navigator.push(
           context,

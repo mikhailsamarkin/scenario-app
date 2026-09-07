@@ -15,6 +15,9 @@ import '../../supabase_config.dart';
 typedef ScenarioOpenGame =
     void Function(BuildContext context, String gameId, String scenarioId);
 
+/// Действие «Поделиться» (US-E5-01).
+typedef ScenarioShare = void Function(ScenarioPublic scenario);
+
 /// Экран сценария (SP-E2-02).
 class ScenarioScreen extends StatefulWidget {
   const ScenarioScreen({
@@ -22,6 +25,7 @@ class ScenarioScreen extends StatefulWidget {
     required this.scenarioId,
     required this.repository,
     required this.onOpenGame,
+    this.onShare,
     this.isOffline = false,
   });
 
@@ -34,6 +38,9 @@ class ScenarioScreen extends StatefulWidget {
   /// Переход на экран игры (US-E2-03).
   final ScenarioOpenGame onOpenGame;
 
+  /// Действие «Поделиться» (US-E5-01).
+  final ScenarioShare? onShare;
+
   /// Офлайн-режим: при отсутствии кэша показать «нет сети» (AC-02).
   final bool isOffline;
 
@@ -43,6 +50,7 @@ class ScenarioScreen extends StatefulWidget {
 
 class _ScenarioScreenState extends State<ScenarioScreen> {
   late Future<ScenarioPublic?> _future;
+  ScenarioPublic? _scenario;
 
   @override
   void initState() {
@@ -59,7 +67,22 @@ class _ScenarioScreenState extends State<ScenarioScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Сценарий')),
+      appBar: AppBar(
+        title: const Text('Сценарий'),
+        actions: [
+          if (widget.onShare != null)
+            IconButton(
+              icon: const Icon(Icons.share),
+              tooltip: 'Поделиться',
+              onPressed: () {
+                final scenario = _scenario;
+                if (scenario != null) {
+                  widget.onShare!(scenario);
+                }
+              },
+            ),
+        ],
+      ),
       body: FutureBuilder<ScenarioPublic?>(
         future: _future,
         builder: (context, snapshot) {
@@ -67,6 +90,7 @@ class _ScenarioScreenState extends State<ScenarioScreen> {
             return _errorState(snapshot.error!);
           }
           final scenario = snapshot.data;
+          _scenario = scenario;
           if (scenario == null) {
             // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
             if (widget.isOffline) {

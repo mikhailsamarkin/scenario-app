@@ -106,6 +106,7 @@
 | SP-E3-04 | [e3-push-deeplink-scenario.md](../specs/e3-push-deeplink-scenario.md) | US-E3-04 |
 | SP-E4-01 | [e4-seo-urls-scenario-game.md](../specs/e4-seo-urls-scenario-game.md) | US-E4-01 |
 | SP-E4-02 | [e4-site-internal-linking.md](../specs/e4-site-internal-linking.md) | US-E4-02 |
+| SP-E5-01 | [e5-share-scenario-system-share.md](../specs/e5-share-scenario-system-share.md) | US-E5-01 |
 
 ---
 
