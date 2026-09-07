@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'app_config.dart';
+import 'firestore_config.dart';
 import 'supabase_config.dart';
 
 void main() async {
@@ -11,6 +12,9 @@ void main() async {
   await Firebase.initializeApp(
     options: AppConfig.firebaseOptions,
   );
+
+  // Включение Firestore persistence для офлайн-чтения кэша (A-20).
+  enableFirestorePersistence();
 
   // Инициализация Supabase (медиа) для текущего окружения.
   await initSupabase();

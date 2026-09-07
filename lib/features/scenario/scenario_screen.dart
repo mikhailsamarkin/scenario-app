@@ -22,6 +22,7 @@ class ScenarioScreen extends StatefulWidget {
     required this.scenarioId,
     required this.repository,
     required this.onOpenGame,
+    this.isOffline = false,
   });
 
   /// ID сценария (`scenario_public/{scenarioId}`).
@@ -32,6 +33,9 @@ class ScenarioScreen extends StatefulWidget {
 
   /// Переход на экран игры (US-E2-03).
   final ScenarioOpenGame onOpenGame;
+
+  /// Офлайн-режим: при отсутствии кэша показать «нет сети» (AC-02).
+  final bool isOffline;
 
   @override
   State<ScenarioScreen> createState() => _ScenarioScreenState();
@@ -64,6 +68,10 @@ class _ScenarioScreenState extends State<ScenarioScreen> {
           }
           final scenario = snapshot.data;
           if (scenario == null) {
+            // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
+            if (widget.isOffline) {
+              return const Center(child: Text('Нет сети. Проверьте подключение.'));
+            }
             return const Center(child: CircularProgressIndicator());
           }
           return _ScenarioContent(

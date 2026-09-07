@@ -71,6 +71,7 @@ class GameScreen extends StatefulWidget {
     required this.scenarioId,
     required this.repository,
     this.slideImageBuilder = _defaultSlideImage,
+    this.isOffline = false,
   });
 
   /// ID игры (`game_public/{gameId}`).
@@ -84,6 +85,9 @@ class GameScreen extends StatefulWidget {
 
   /// Фабрика виджета изображения слайда (тестируемость).
   final GameSlideImageBuilder slideImageBuilder;
+
+  /// Офлайн-режим: при отсутствии кэша показать «нет сети» (AC-02).
+  final bool isOffline;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -116,6 +120,10 @@ class _GameScreenState extends State<GameScreen> {
           }
           final game = snapshot.data;
           if (game == null) {
+            // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
+            if (widget.isOffline) {
+              return const Center(child: Text('Нет сети. Проверьте подключение.'));
+            }
             return const Center(child: CircularProgressIndicator());
           }
           return _GameContent(

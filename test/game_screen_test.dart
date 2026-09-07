@@ -17,7 +17,7 @@ import 'package:scenario/features/game/game_screen.dart';
 class _FakeRepository implements AggregateRepository {
   _FakeRepository(this._game);
 
-  final GamePublic _game;
+  final GamePublic? _game;
 
   @override
   Future<GamePublic?> getGame(String gameId) async => _game;
@@ -143,5 +143,35 @@ void main() {
     await tester.pump();
 
     expect(find.text('Описание в контексте вечеринки'), findsNothing);
+  });
+
+  testWidgets('AC-02: офлайн без кэша — состояние «нет сети»', (tester) async {
+    await tester.pumpWidget(_wrap(GameScreen(
+      gameId: 'g1',
+      scenarioId: 's1',
+      repository: _FakeRepository(null),
+      slideImageBuilder: _buildSlideImage,
+      isOffline: true,
+    )));
+    await tester.pump();
+
+    expect(find.text('Нет сети. Проверьте подключение.'), findsOneWidget);
+  });
+
+  testWidgets('AC-01: офлайн с кэшем — данные рендерятся без ошибки',
+      (tester) async {
+    final game = _buildGame();
+    await tester.pumpWidget(_wrap(GameScreen(
+      gameId: 'g1',
+      scenarioId: 's1',
+      repository: _FakeRepository(game),
+      slideImageBuilder: _buildSlideImage,
+      isOffline: true,
+    )));
+    await tester.pump();
+
+    // Данные из кэша отображаются, ошибки нет.
+    expect(find.text('Dixit'), findsOneWidget);
+    expect(find.text('Нет сети. Проверьте подключение.'), findsNothing);
   });
 }

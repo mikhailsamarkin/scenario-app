@@ -15,7 +15,7 @@ import 'package:scenario/features/home/home_screen.dart';
 class _FakeRepository implements AggregateRepository {
   _FakeRepository(this._feed);
 
-  final HomeFeed _feed;
+  final HomeFeed? _feed;
 
   @override
   Future<HomeFeed?> getHomeFeed() async => _feed;
@@ -109,5 +109,30 @@ void main() {
     await tester.pump();
 
     expect(find.text('Пока нет сценариев'), findsOneWidget);
+  });
+
+  testWidgets('AC-02: офлайн без кэша — состояние «нет сети»', (tester) async {
+    await tester.pumpWidget(_wrap(HomeScreen(
+      repository: _FakeRepository(null),
+      onOpenScenario: (context, scenarioId) {},
+      isOffline: true,
+    )));
+    await tester.pump();
+
+    expect(find.text('Нет сети. Проверьте подключение.'), findsOneWidget);
+  });
+
+  testWidgets('AC-01: офлайн с кэшем — данные рендерятся без ошибки',
+      (tester) async {
+    await tester.pumpWidget(_wrap(HomeScreen(
+      repository: _FakeRepository(_buildFeed()),
+      onOpenScenario: (context, scenarioId) {},
+      isOffline: true,
+    )));
+    await tester.pump();
+
+    // Данные из кэша отображаются, ошибки нет.
+    expect(find.text('Вечеринка'), findsOneWidget);
+    expect(find.text('Нет сети. Проверьте подключение.'), findsNothing);
   });
 }

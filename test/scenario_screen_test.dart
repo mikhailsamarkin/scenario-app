@@ -15,7 +15,7 @@ import 'package:scenario/features/scenario/scenario_screen.dart';
 class _FakeRepository implements AggregateRepository {
   _FakeRepository(this._scenario);
 
-  final ScenarioPublic _scenario;
+  final ScenarioPublic? _scenario;
 
   @override
   Future<ScenarioPublic?> getScenario(String scenarioId) async => _scenario;
@@ -104,5 +104,32 @@ void main() {
 
     // Текст с \n отображается целиком (переносы сохраняются визуально).
     expect(find.text('Первая строка\nВторая строка'), findsOneWidget);
+  });
+
+  testWidgets('AC-02: офлайн без кэша — состояние «нет сети»', (tester) async {
+    await tester.pumpWidget(_wrap(ScenarioScreen(
+      scenarioId: 's1',
+      repository: _FakeRepository(null),
+      onOpenGame: (context, gameId, scenarioId) {},
+      isOffline: true,
+    )));
+    await tester.pump();
+
+    expect(find.text('Нет сети. Проверьте подключение.'), findsOneWidget);
+  });
+
+  testWidgets('AC-01: офлайн с кэшем — данные рендерятся без ошибки',
+      (tester) async {
+    await tester.pumpWidget(_wrap(ScenarioScreen(
+      scenarioId: 's1',
+      repository: _FakeRepository(_buildScenario()),
+      onOpenGame: (context, gameId, scenarioId) {},
+      isOffline: true,
+    )));
+    await tester.pump();
+
+    // Данные из кэша отображаются, ошибки нет.
+    expect(find.text('Вечеринка'), findsOneWidget);
+    expect(find.text('Нет сети. Проверьте подключение.'), findsNothing);
   });
 }

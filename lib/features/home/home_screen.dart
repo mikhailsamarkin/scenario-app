@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
     super.key,
     required this.repository,
     required this.onOpenScenario,
+    this.isOffline = false,
   });
 
   /// Источник данных `home_feed/main` (A-11, A-38).
@@ -25,6 +26,9 @@ class HomeScreen extends StatefulWidget {
 
   /// Переход на экран сценария (US-E2-02).
   final HomeOpenScenario onOpenScenario;
+
+  /// Офлайн-режим: при отсутствии кэша показать «нет сети» (AC-02).
+  final bool isOffline;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -57,6 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
           }
           final feed = snapshot.data;
           if (feed == null) {
+            // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
+            if (widget.isOffline) {
+              return const Center(child: Text('Нет сети. Проверьте подключение.'));
+            }
             return const Center(child: CircularProgressIndicator());
           }
           return _HomeContent(feed: feed, onOpenScenario: widget.onOpenScenario);

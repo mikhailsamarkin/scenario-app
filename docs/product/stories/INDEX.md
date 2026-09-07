@@ -95,6 +95,7 @@
 | SP-E2-01 | [e2-home-scenario-showcase.md](../specs/e2-home-scenario-showcase.md) | US-E2-01 |
 | SP-E2-02 | [e2-scenario-screen-block-order.md](../specs/e2-scenario-screen-block-order.md) | US-E2-02 |
 | SP-E2-03 | [e2-game-screen-carousel-characteristics.md](../specs/e2-game-screen-carousel-characteristics.md) | US-E2-03 |
+| SP-E2-05 | [e2-offline-cached-content.md](../specs/e2-offline-cached-content.md) | US-E2-05 |
 | SP-E2-06 | [e2-carousel-image-cache-performance.md](../specs/e2-carousel-image-cache-performance.md) | US-E2-06 |
 
 ---
