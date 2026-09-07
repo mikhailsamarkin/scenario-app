@@ -34,6 +34,7 @@
 | US-E2-04 | Обновление контента при наличии сети | [e2-online-content-refresh.md](e2-online-content-refresh.md) |
 | US-E2-05 | Офлайн: открытие ранее загруженного контента | [e2-offline-cached-content.md](e2-offline-cached-content.md) |
 | US-E2-06 | Производительность карусели и кэш изображений | [e2-carousel-image-cache-performance.md](e2-carousel-image-cache-performance.md) |
+| US-E2-07 | Склейка МП: точка входа и навигация Home → Scenario → Game | [e2-mp-entry-navigation.md](e2-mp-entry-navigation.md) |
 
 ## E3. Онбординг и push
 
@@ -98,6 +99,7 @@
 | SP-E2-04 | [e2-online-content-refresh.md](../specs/e2-online-content-refresh.md) | US-E2-04 |
 | SP-E2-05 | [e2-offline-cached-content.md](../specs/e2-offline-cached-content.md) | US-E2-05 |
 | SP-E2-06 | [e2-carousel-image-cache-performance.md](../specs/e2-carousel-image-cache-performance.md) | US-E2-06 |
+| SP-E2-07 | [e2-mp-entry-navigation.md](../specs/e2-mp-entry-navigation.md) | US-E2-07 |
 | SP-E3-01 | [e3-onboarding-value-proposition.md](../specs/e3-onboarding-value-proposition.md) | US-E3-01 |
 | SP-E4-01 | [e4-seo-urls-scenario-game.md](../specs/e4-seo-urls-scenario-game.md) | US-E4-01 |
 | SP-E4-02 | [e4-site-internal-linking.md](../specs/e4-site-internal-linking.md) | US-E4-02 |
