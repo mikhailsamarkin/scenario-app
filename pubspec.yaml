@@ -51,6 +51,9 @@ dependencies:
   # Системный share (US-E5-01): платформенный share sheet (A-18).
   share_plus: ^13.3.0
 
+  # Universal Links / App Links (US-E5-02): перехват HTTPS-ссылок (A-24).
+  app_links: ^7.2.1
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8

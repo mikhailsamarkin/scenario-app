@@ -6,12 +6,14 @@
 
 import 'dart:async';
 
+import 'package:app_links/app_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'data/firestore/aggregate_repository_interface.dart';
 import 'features/game/game_screen.dart';
 import 'features/home/home_screen.dart';
+import 'features/link/universal_link_service.dart';
 import 'features/onboarding/onboarding_prefs.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/onboarding/push_subscription_service.dart';
@@ -25,6 +27,7 @@ class ScenarioApp extends StatefulWidget {
     super.key,
     required this.repository,
     this.deepLinkSource,
+    this.linkSource,
     this.onboardingStatusSource,
   });
 
@@ -33,6 +36,9 @@ class ScenarioApp extends StatefulWidget {
 
   /// Источник deep link из push (для тестируемости; по умолчанию — FCM).
   final PushDeepLinkSource? deepLinkSource;
+
+  /// Источник Universal Links (для тестируемости; по умолчанию — app_links).
+  final LinkSource? linkSource;
 
   /// Источник флага «онбординг пройден» (для тестируемости).
   final OnboardingStatusSource? onboardingStatusSource;
@@ -44,7 +50,9 @@ class ScenarioApp extends StatefulWidget {
 class _ScenarioAppState extends State<ScenarioApp> {
   late Future<bool> _onboardingFuture;
   late final PushDeepLinkService _deepLinkService;
+  late final UniversalLinkService _universalLinkService;
   StreamSubscription<String?>? _deepLinkSub;
+  StreamSubscription<String?>? _universalLinkSub;
 
   @override
   void initState() {
@@ -56,13 +64,35 @@ class _ScenarioAppState extends State<ScenarioApp> {
       widget.deepLinkSource ??
           FirebaseMessagingDeepLinkSource(FirebaseMessaging.instance),
     );
+    _universalLinkService = UniversalLinkService(
+      widget.linkSource ?? AppLinksSource(AppLinks()),
+      widget.repository,
+    );
     _listenDeepLinks();
+    _listenUniversalLinks();
   }
 
   @override
   void dispose() {
     _deepLinkSub?.cancel();
+    _universalLinkSub?.cancel();
     super.dispose();
+  }
+
+  /// Обработка Universal Links: холодный старт (getInitialLink) и фоновое
+  /// открытие (uriLinkStream) → навигация на сценарий (AC-01).
+  void _listenUniversalLinks() {
+    _universalLinkService.getInitialScenarioId().then((scenarioId) {
+      if (scenarioId != null && mounted) {
+        _openScenario(scenarioId);
+      }
+    });
+    _universalLinkSub =
+        _universalLinkService.onScenarioOpened().listen((scenarioId) {
+      if (scenarioId != null && mounted) {
+        _openScenario(scenarioId);
+      }
+    });
   }
 
   /// Обработка тапа по push: холодный старт (getInitialMessage) и фоновый

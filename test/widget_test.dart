@@ -13,6 +13,7 @@ import 'package:scenario/data/contract/enums.dart';
 import 'package:scenario/data/contract/models.dart';
 import 'package:scenario/data/firestore/aggregate_repository_interface.dart';
 import 'package:scenario/features/onboarding/onboarding_prefs.dart';
+import 'package:scenario/features/link/universal_link_service.dart';
 import 'package:scenario/features/push/push_deep_link_service.dart';
 
 /// Фейковый репозиторий с заданной витриной и сценарием.
@@ -87,6 +88,15 @@ class _NoDeepLinkSource implements PushDeepLinkSource {
   Stream<String?> onScenarioOpened() => const Stream.empty();
 }
 
+/// Фейковый источник Universal Links (без ссылок).
+class _NoLinkSource implements LinkSource {
+  @override
+  Future<Uri?> getInitialLink() async => null;
+
+  @override
+  Stream<Uri> onLink() => const Stream.empty();
+}
+
 HomeFeed _feed() => HomeFeed(
       contentVersion: 1,
       updatedAt: DateTime.utc(2026, 9, 7),
@@ -101,6 +111,7 @@ ScenarioApp _app(AggregateRepository repo, {required bool onboarding}) {
   return ScenarioApp(
     repository: repo,
     deepLinkSource: _NoDeepLinkSource(),
+    linkSource: _NoLinkSource(),
     onboardingStatusSource: _OnboardingStatus(onboarding),
   );
 }
