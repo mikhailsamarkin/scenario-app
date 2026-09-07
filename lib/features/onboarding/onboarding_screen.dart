@@ -15,7 +15,7 @@ class _OnboardingStep {
   final String body;
 }
 
-const List<_OnboardingStep> _STEPS = const [
+const List<_OnboardingStep> _steps = [
   _OnboardingStep(
     'Выберите ситуацию',
     'Сценарий — это ситуация: «Вечеринка», «Семейный вечер», «В поездку».',
@@ -51,11 +51,9 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int _step = 0;
 
-  bool get _isLastValueStep => _step == _STEPS.length - 1;
+  bool get _isLastValueStep => _step == _steps.length - 1;
 
-  bool get _isPushStep => widget.askPush && _step == _STEPS.length;
-
-  bool get _isDone => _step > _STEPS.length;
+  bool get _isPushStep => widget.askPush && _step == _steps.length;
 
   void _next() {
     setState(() {
@@ -78,8 +76,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body = 'Разрешите уведомления, чтобы узнавать о новых сценариях. '
           'Это не обязательно.';
     } else {
-      title = _STEPS[_step].title;
-      body = _STEPS[_step].body;
+      title = _steps[_step].title;
+      body = _steps[_step].body;
     }
 
     return Scaffold(

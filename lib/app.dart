@@ -4,10 +4,8 @@
 // (A-11, A-38) и Navigator'ом. Колбэки экранов (onOpenScenario/onOpenGame)
 // переводят на соответствующие экраны через Navigator.push.
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'data/firestore/aggregate_repository.dart';
 import 'data/firestore/aggregate_repository_interface.dart';
 import 'features/game/game_screen.dart';
 import 'features/home/home_screen.dart';

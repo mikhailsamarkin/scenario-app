@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ void main() async {
   // Инициализация Supabase (медиа) для текущего окружения.
   await initSupabase();
 
-  runApp(const ScenarioApp(
+  runApp(ScenarioApp(
     repository: FirestoreAggregateRepository(FirebaseFirestore.instance),
   ));
 }

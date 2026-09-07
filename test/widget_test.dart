@@ -5,7 +5,6 @@
 // ScenarioApp (точка входа + навигация) конструируется и рендерит онбординг
 // при первом запуске (флаг «пройден» не установлен).
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:scenario/app.dart';

@@ -13,11 +13,8 @@ Widget _wrap(Widget child) => MaterialApp(home: child);
 
 void main() {
   testWidgets('AC-01: онбординг объясняет «ситуация → игры»', (tester) async {
-    var completed = false;
     await tester.pumpWidget(_wrap(OnboardingScreen(
-      onCompleted: (context) {
-        completed = true;
-      },
+      onCompleted: (context) {},
     )));
     await tester.pump();
 
