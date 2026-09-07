@@ -92,6 +92,8 @@
 | SP-E1-03 | [e1-expert-scenario-games-order-short-description.md](../specs/e1-expert-scenario-games-order-short-description.md) | US-E1-03 |
 | SP-E1-04 | [e1-expert-sharing-seo-fields.md](../specs/e1-expert-sharing-seo-fields.md) | US-E1-04 |
 | SP-E1-05 | [e1-publish-queue-notification-event.md](../specs/e1-publish-queue-notification-event.md) | US-E1-05 |
+| SP-E2-03 | [e2-game-screen-carousel-characteristics.md](../specs/e2-game-screen-carousel-characteristics.md) | US-E2-03 |
+| SP-E2-06 | [e2-carousel-image-cache-performance.md](../specs/e2-carousel-image-cache-performance.md) | US-E2-06 |
 
 ---
 
