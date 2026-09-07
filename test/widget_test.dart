@@ -1,30 +1,41 @@
-// This is a basic Flutter widget test.
+// Базовый smoke-тест: корневой виджет приложения строится без ошибок.
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Полноценные сценарии экранов покрыты в home/scenario/game_screen_test.dart
+// с фейковым репозиторием; здесь проверяется только, что ScenarioApp
+// (точка входа + навигация) конструируется и рендерит главный экран.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:scenario/main.dart';
+import 'package:scenario/app.dart';
+import 'package:scenario/data/contract/models.dart';
+import 'package:scenario/data/firestore/aggregate_repository_interface.dart';
+
+/// Фейковый репозиторий с пустой витриной.
+class _EmptyRepository implements AggregateRepository {
+  @override
+  Future<HomeFeed?> getHomeFeed() async => null;
+
+  @override
+  Future<SemanticGroupPublic?> getSemanticGroup(String id) async => null;
+
+  @override
+  Future<ScenarioPublic?> getScenario(String scenarioId) async => null;
+
+  @override
+  Future<GamePublic?> getGame(String gameId) async => null;
+
+  @override
+  Future<SitemapPublic?> getSitemap() async => null;
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  testWidgets('ScenarioApp строится и рендерит главный экран',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(ScenarioApp(repository: _EmptyRepository()));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Заголовок главного экрана (витрина) присутствует.
+    expect(find.text('Сценарии'), findsOneWidget);
   });
 }
