@@ -62,4 +62,12 @@ class AnalyticsService {
       parameters: {kParamScenarioId: scenarioId},
     );
   }
+
+  /// Отмена шаринга (share_dismissed, US-E5-04).
+  Future<void> logShareDismissed(String scenarioId) {
+    return _logger.logEvent(
+      kEventShareDismissed,
+      parameters: {kParamScenarioId: scenarioId},
+    );
+  }
 }

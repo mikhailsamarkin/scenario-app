@@ -7,6 +7,7 @@
 import 'package:share_plus/share_plus.dart';
 
 import '../../data/contract/models.dart';
+import 'share_analytics_service.dart';
 
 /// Базовый URL сценария (A-23).
 const String kScenarioBaseUrl = 'https://scenario-games.ru/scenario';
@@ -16,14 +17,14 @@ const String kShareUtmSource = 'share';
 
 /// Запускает системный share (абстракция для тестируемости).
 abstract interface class ShareLauncher {
-  Future<void> share({required String text, required String uri});
+  Future<ShareResult> share({required String text, required String uri});
 }
 
 /// Реализация поверх share_plus.
 class SharePlusLauncher implements ShareLauncher {
   @override
-  Future<void> share({required String text, required String uri}) async {
-    await SharePlus.instance.share(
+  Future<ShareResult> share({required String text, required String uri}) async {
+    return SharePlus.instance.share(
       ShareParams(text: text, uri: Uri.parse(uri)),
     );
   }
@@ -31,9 +32,11 @@ class SharePlusLauncher implements ShareLauncher {
 
 /// Сервис шаринга сценария.
 class ShareScenarioService {
-  ShareScenarioService(this._launcher);
+  ShareScenarioService(this._launcher, {ShareAnalyticsService? analytics})
+      : _analytics = analytics;
 
   final ShareLauncher _launcher;
+  final ShareAnalyticsService? _analytics;
 
   /// Формирует URL сценария с UTM (A-23, A-25).
   String buildShareUrl(String slug) {
@@ -46,9 +49,12 @@ class ShareScenarioService {
   }
 
   /// Делится сценарием: текст из данных + URL с UTM (AC-01).
+  /// Логирует попытку и результат шаринга (US-E5-04).
   Future<void> shareScenario(ScenarioPublic scenario) async {
     final text = buildShareText(scenario);
     final url = buildShareUrl(scenario.slug);
-    await _launcher.share(text: text, uri: url);
+    await _analytics?.logShareAttempt(scenario.id);
+    final result = await _launcher.share(text: text, uri: url);
+    await _analytics?.logShareResult(scenario.id, result);
   }
 }

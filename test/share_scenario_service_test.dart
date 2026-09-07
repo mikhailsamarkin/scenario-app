@@ -4,6 +4,7 @@
 // ShareLauncher — фейк.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:scenario/data/contract/models.dart';
 import 'package:scenario/features/share/share_scenario_service.dart';
@@ -14,9 +15,10 @@ class _FakeLauncher implements ShareLauncher {
   String? uri;
 
   @override
-  Future<void> share({required String text, required String uri}) async {
+  Future<ShareResult> share({required String text, required String uri}) async {
     this.text = text;
     this.uri = uri;
+    return const ShareResult('', ShareResultStatus.success);
   }
 }
 

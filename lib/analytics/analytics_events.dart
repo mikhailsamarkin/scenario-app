@@ -18,6 +18,9 @@ const String kEventShareAttempt = 'share_attempt';
 /// Успешный шаринг (US-E5-04).
 const String kEventShareSuccess = 'share_success';
 
+/// Отмена шаринга (US-E5-04).
+const String kEventShareDismissed = 'share_dismissed';
+
 /// Параметр: id сценария.
 const String kParamScenarioId = 'scenario_id';
 
