@@ -82,6 +82,12 @@
 | US-E7-01 | Группы смысла на главном экране | [e7-meaning-groups-home.md](e7-meaning-groups-home.md) |
 | US-E7-02 | «Сценарии прошлого» для снятых с витрины подборок | [e7-past-scenarios-archive.md](e7-past-scenarios-archive.md) |
 
+## E8. Инфраструктура и релиз (после MVP)
+
+| ID | Сторя | Файл |
+|----|--------|------|
+| US-E8-01 | Конфигурация Universal Links на домене (AASA / assetlinks) | [e8-universal-links-domain-config.md](e8-universal-links-domain-config.md) |
+
 ## Спецификации реализации
 
 | ID | Спека | Сторя |
@@ -112,4 +118,4 @@
 
 ---
 
-**Всего:** 34 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
+**Всего:** 35 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
