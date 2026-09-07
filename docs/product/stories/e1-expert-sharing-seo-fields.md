@@ -2,13 +2,13 @@
 story_id: US-E1-04
 title: "Поля шаринга и SEO для сценария и игры"
 epic: "E1"
-status: drafted
+status: accepted
 bt_refs: [FR-M-7, FR-W-2]
 st_refs: ["§4.4"]
 ed_refs: [ED-8, ED-9]
 source_story: |
   Как эксперт, я хочу задать поля шаринга и SEO (title, description, OG-картинка), чтобы ссылки и поиск выглядели предсказуемо.
-updated: "2026-04-04"
+updated: "2026-09-07"
 ---
 
 # Поля шаринга и SEO для сценария и игры

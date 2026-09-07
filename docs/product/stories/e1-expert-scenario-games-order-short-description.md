@@ -2,13 +2,13 @@
 story_id: US-E1-03
 title: "Привязка игр к сценарию: порядок и shortDescription"
 epic: "E1"
-status: drafted
+status: accepted
 bt_refs: [FR-B-1, CR-4, FR-M-2]
 st_refs: [A-10]
 ed_refs: [ED-4]
 source_story: |
   Как эксперт, я хочу привязать к сценарию игры с порядком и `shortDescription`, чтобы контент соответствовал FR-M-2.
-updated: "2026-04-04"
+updated: "2026-09-07"
 ---
 
 # Привязка игр к сценарию: порядок и shortDescription

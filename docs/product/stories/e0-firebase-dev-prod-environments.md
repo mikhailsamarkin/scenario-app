@@ -2,13 +2,13 @@
 story_id: US-E0-02
 title: "Окружения Firebase dev/staging и production"
 epic: "E0"
-status: drafted
+status: accepted
 bt_refs: []
 st_refs: [A-40, A-43]
 ed_refs: []
 source_story: |
   Как команда, я хочу dev/staging и production Firebase-проекты, чтобы безопасно тестировать публикацию и клиенты.
-updated: "2026-04-04"
+updated: "2026-09-07"
 ---
 
 # Окружения Firebase dev/staging и production
