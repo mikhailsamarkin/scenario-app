@@ -81,6 +81,18 @@
 | US-E7-01 | Группы смысла на главном экране | [e7-meaning-groups-home.md](e7-meaning-groups-home.md) |
 | US-E7-02 | «Сценарии прошлого» для снятых с витрины подборок | [e7-past-scenarios-archive.md](e7-past-scenarios-archive.md) |
 
+## Спецификации реализации
+
+| ID | Спека | Сторя |
+|----|-------|-------|
+| SP-E0-01 | [e0-schema-public-aggregates-contract.md](../specs/e0-schema-public-aggregates-contract.md) | US-E0-01 |
+| SP-E0-02 | [e0-firebase-dev-prod-environments.md](../specs/e0-firebase-dev-prod-environments.md) | US-E0-02 |
+| SP-E1-01 | [e1-expert-create-game-carousel.md](../specs/e1-expert-create-game-carousel.md) | US-E1-01 |
+| SP-E1-02 | [e1-expert-scenario-why-these-games.md](../specs/e1-expert-scenario-why-these-games.md) | US-E1-02 |
+| SP-E1-03 | [e1-expert-scenario-games-order-short-description.md](../specs/e1-expert-scenario-games-order-short-description.md) | US-E1-03 |
+| SP-E1-04 | [e1-expert-sharing-seo-fields.md](../specs/e1-expert-sharing-seo-fields.md) | US-E1-04 |
+| SP-E1-05 | [e1-publish-queue-notification-event.md](../specs/e1-publish-queue-notification-event.md) | US-E1-05 |
+
 ---
 
 **Всего:** 34 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
