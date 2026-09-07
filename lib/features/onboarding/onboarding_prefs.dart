@@ -8,6 +8,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Ключ флага «онбординг пройден».
 const String kOnboardingCompletedKey = 'onboarding_completed';
 
+/// Источник флага «онбординг пройден» (абстракция для тестируемости).
+abstract interface class OnboardingStatusSource {
+  Future<bool> isCompleted();
+}
+
+/// Реализация поверх shared_preferences.
+class SharedPrefsOnboardingStatus implements OnboardingStatusSource {
+  @override
+  Future<bool> isCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(kOnboardingCompletedKey) ?? false;
+  }
+}
+
 /// Читает флаг «онбординг пройден». По умолчанию false (первый запуск).
 Future<bool> isOnboardingCompleted() async {
   final prefs = await SharedPreferences.getInstance();

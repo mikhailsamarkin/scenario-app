@@ -1,35 +1,81 @@
-// Базовый smoke-тест: корневой виджет приложения строится без ошибок.
+// Базовые тесты корневого виджета и навигации (US-E2-07).
 //
-// Полноценные сценарии экранов покрыты в home/scenario/game/onboarding
-// _screen_test.dart с фейковым репозиторием; здесь проверяется только, что
-// ScenarioApp (точка входа + навигация) конструируется и рендерит онбординг
-// при первом запуске (флаг «пройден» не установлен).
+// Покрывают TC-01 (точка входа — витрина), TC-02/TC-03 (переходы
+// Home → Scenario → Game). Онбординг при первом запуске (флаг не установлен)
+// тоже проверяется. Репозиторий и источники — фейки.
 
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:scenario/app.dart';
+import 'package:scenario/data/contract/enums.dart';
 import 'package:scenario/data/contract/models.dart';
 import 'package:scenario/data/firestore/aggregate_repository_interface.dart';
+import 'package:scenario/features/onboarding/onboarding_prefs.dart';
 import 'package:scenario/features/push/push_deep_link_service.dart';
 
-/// Фейковый репозиторий с пустой витриной.
-class _EmptyRepository implements AggregateRepository {
+/// Фейковый репозиторий с заданной витриной и сценарием.
+class _FakeRepository implements AggregateRepository {
+  HomeFeed? _feed;
+
+  void setFeed(HomeFeed feed) => _feed = feed;
+
   @override
-  Future<HomeFeed?> getHomeFeed() async => null;
+  Future<HomeFeed?> getHomeFeed() async => _feed;
+
+  @override
+  Future<ScenarioPublic?> getScenario(String scenarioId) async {
+    if (scenarioId != 's1') return null;
+    return ScenarioPublic(
+      id: scenarioId,
+      slug: 's1',
+      title: 'Сценарий',
+      whyTheseGames: 'Почему эти игры',
+      seoTitle: 'Сценарий',
+      games: const [
+        ScenarioGameRef(gameId: 'g1', slug: 'g1', title: 'Игра', shortDescription: 'Описание'),
+      ],
+      contentVersion: 1,
+      updatedAt: DateTime.utc(2026, 9, 7),
+    );
+  }
+
+  @override
+  Future<GamePublic?> getGame(String gameId) async {
+    if (gameId != 'g1') return null;
+    return GamePublic(
+      id: gameId,
+      slug: 'g1',
+      title: 'Игра',
+      seoTitle: 'Игра',
+      seoDescription: 'Описание',
+      playersHint: PlayersHint.players24,
+      durationBucket: DurationBucket.short,
+      ageHint: AgeHint.family,
+      rulesComplexity: RulesComplexity.easy,
+      carousel: const [],
+      scenarios: const [],
+      contentVersion: 1,
+      updatedAt: DateTime.utc(2026, 9, 7),
+    );
+  }
 
   @override
   Future<SemanticGroupPublic?> getSemanticGroup(String id) async => null;
 
   @override
-  Future<ScenarioPublic?> getScenario(String scenarioId) async => null;
-
-  @override
-  Future<GamePublic?> getGame(String gameId) async => null;
-
-  @override
   Future<SitemapPublic?> getSitemap() async => null;
+}
+
+/// Источник флага «онбординг пройден» (настраиваемый).
+class _OnboardingStatus implements OnboardingStatusSource {
+  _OnboardingStatus(this.completed);
+
+  bool completed;
+
+  @override
+  Future<bool> isCompleted() async => completed;
 }
 
 /// Фейковый источник deep link (без уведомлений).
@@ -41,16 +87,59 @@ class _NoDeepLinkSource implements PushDeepLinkSource {
   Stream<String?> onScenarioOpened() => const Stream.empty();
 }
 
+HomeFeed _feed() => HomeFeed(
+      contentVersion: 1,
+      updatedAt: DateTime.utc(2026, 9, 7),
+      carousel: const [],
+      vitrine: const [
+        ScenarioCard(scenarioId: 's1', slug: 's1', title: 'Сценарий'),
+      ],
+      groups: const [],
+    );
+
+ScenarioApp _app(AggregateRepository repo, {required bool onboarding}) {
+  return ScenarioApp(
+    repository: repo,
+    deepLinkSource: _NoDeepLinkSource(),
+    onboardingStatusSource: _OnboardingStatus(onboarding),
+  );
+}
+
 void main() {
-  testWidgets('ScenarioApp строится и рендерит онбординг при первом запуске',
+  testWidgets('AC-01: точка входа — витрина при пройденном онбординге',
       (WidgetTester tester) async {
-    await tester.pumpWidget(ScenarioApp(
-      repository: _EmptyRepository(),
-      deepLinkSource: _NoDeepLinkSource(),
-    ));
+    final repo = _FakeRepository();
+    repo.setFeed(_feed());
+    await tester.pumpWidget(_app(repo, onboarding: true));
+    await tester.pumpAndSettle();
+
+    // Витрина отображается (не онбординг).
+    expect(find.text('Сценарий'), findsOneWidget);
+    expect(find.text('Добро пожаловать'), findsNothing);
+  });
+
+  testWidgets('AC-02: переход Home → Scenario → Game', (tester) async {
+    final repo = _FakeRepository();
+    repo.setFeed(_feed());
+    await tester.pumpWidget(_app(repo, onboarding: true));
+    await tester.pumpAndSettle();
+
+    // Тап по сценарию → экран сценария (уникальный текст whyTheseGames).
+    await tester.tap(find.text('Сценарий'));
+    await tester.pumpAndSettle();
+    expect(find.text('Почему эти игры'), findsOneWidget);
+
+    // Тап по игре → экран игры (уникальный заголовок).
+    await tester.tap(find.text('Игра'));
+    await tester.pumpAndSettle();
+    expect(find.text('Игра'), findsWidgets);
+  });
+
+  testWidgets('онбординг при первом запуске', (tester) async {
+    final repo = _FakeRepository();
+    await tester.pumpWidget(_app(repo, onboarding: false));
     await tester.pump();
 
-    // При первом запуске (флаг не установлен) показывается онбординг.
     expect(find.text('Добро пожаловать'), findsOneWidget);
   });
 }

@@ -394,8 +394,10 @@ async function publishScenario({ project, file, dryRun }) {
     });
     console.log(`written home_feed/main (vitrine=${vitrine.length})`);
 
+    // Удаляем устаревшие поля scenarioSlugs/gameSlugs (контракт v2: entries).
+    const { scenarioSlugs, gameSlugs, ...sitemapClean } = sitemap;
     await sitemapRef.set({
-      ...sitemap,
+      ...sitemapClean,
       scenarioEntries,
       contentVersion: homeNextVersion,
       updatedAt: now,

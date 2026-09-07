@@ -24,6 +24,7 @@ class ScenarioApp extends StatefulWidget {
     super.key,
     required this.repository,
     this.deepLinkSource,
+    this.onboardingStatusSource,
   });
 
   /// Источник данных (в боевом коде — Firestore, A-11/A-38).
@@ -31,6 +32,9 @@ class ScenarioApp extends StatefulWidget {
 
   /// Источник deep link из push (для тестируемости; по умолчанию — FCM).
   final PushDeepLinkSource? deepLinkSource;
+
+  /// Источник флага «онбординг пройден» (для тестируемости).
+  final OnboardingStatusSource? onboardingStatusSource;
 
   @override
   State<ScenarioApp> createState() => _ScenarioAppState();
@@ -44,7 +48,9 @@ class _ScenarioAppState extends State<ScenarioApp> {
   @override
   void initState() {
     super.initState();
-    _onboardingFuture = isOnboardingCompleted();
+    _onboardingFuture =
+        (widget.onboardingStatusSource ?? SharedPrefsOnboardingStatus())
+            .isCompleted();
     _deepLinkService = PushDeepLinkService(
       widget.deepLinkSource ??
           FirebaseMessagingDeepLinkSource(FirebaseMessaging.instance),

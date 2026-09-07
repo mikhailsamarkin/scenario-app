@@ -261,8 +261,10 @@ async function publishGame({ project, file, dryRun }) {
   });
   console.log(`written home_feed/main (carousel=${homeCarousel.length})`);
 
+  // Удаляем устаревшие поля scenarioSlugs/gameSlugs (контракт v2: entries).
+  const { scenarioSlugs, gameSlugs, ...sitemapClean } = sitemap;
   await sitemapRef.set({
-    ...sitemap,
+    ...sitemapClean,
     gameEntries,
     contentVersion: nextVersion,
     updatedAt: now,
