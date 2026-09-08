@@ -20,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 
 import { validateGame } from './validate-game.mjs';
 import { validateScenario } from './validate-scenario.mjs';
+import { validateGroup } from './validate-group.mjs';
 
 const PROJECTS = Object.freeze({
   dev: Object.freeze({ firebaseProjectId: 'scenario-ba26a' }),
@@ -42,6 +43,13 @@ const CONTENT_TYPES = Object.freeze([
     dir: resolve(CONTENT_DIR, 'scenarios'),
     importScript: 'import-scenario.mjs',
     validate: validateScenario,
+  }),
+  Object.freeze({
+    kind: 'группа смысла',
+    dir: resolve(CONTENT_DIR, 'groups'),
+    importScript: 'import-groups.mjs',
+    validate: validateGroup,
+    isBulk: true,
   }),
 ]);
 
@@ -98,15 +106,19 @@ function validateAll(files, validate, kind) {
 }
 
 // Шаг 2: импорт каждой фикстуры через скрипт импорта (логика не дублируется).
-function importAll(files, importScript, project, dryRun) {
-  for (const file of files) {
-    const args = [importScript, '--project', project, file];
+// Группы смысла импортируются одним вызовом (import-groups.mjs обрабатывает
+// все файлы в data/content/groups/), поэтому файл не передаётся.
+function importAll(files, importScript, project, dryRun, isBulk = false) {
+  const targets = isBulk ? [null] : files;
+  for (const file of targets) {
+    const args = [importScript, '--project', project];
+    if (file) args.push(file);
     if (dryRun) args.push('--dry-run');
     const result = spawnSync(process.execPath, args, { cwd: TOOLS_DIR });
     process.stdout.write(result.stdout);
     process.stderr.write(result.stderr);
     if (result.status !== 0) {
-      fail(`Импорт ${file} завершился с кодом ${result.status}`);
+      fail(`Импорт ${file ?? importScript} завершился с кодом ${result.status}`);
     }
   }
 }
@@ -116,7 +128,7 @@ let total = 0;
 for (const type of CONTENT_TYPES) {
   const fixtures = listFixtures(type.dir);
   validateAll(fixtures, type.validate, type.kind);
-  importAll(fixtures, type.importScript, project, dryRun);
+  importAll(fixtures, type.importScript, project, dryRun, type.isBulk);
   total += fixtures.length;
 }
 console.log(`OK: импортировано ${total} фикстур (${project})${dryRun ? ' [dry-run]' : ''}`);

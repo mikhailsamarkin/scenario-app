@@ -40,7 +40,14 @@ async function dumpCollection(name) {
 
 async function main() {
   console.log(`=== ${env} (${cfg.firebaseProjectId}) ===`);
-  for (const coll of ['games', 'game_public', 'home_feed', 'sitemap_public']) {
+  for (const coll of [
+    'games',
+    'game_public',
+    'scenario_public',
+    'semantic_groups_public',
+    'home_feed',
+    'sitemap_public',
+  ]) {
     const docs = await dumpCollection(coll);
     console.log(`\n--- ${coll} (${docs.length}) ---`);
     for (const d of docs) {
