@@ -77,7 +77,9 @@ flowchart TD
 
 * `scenario_screen.dart` / `game_screen.dart`: именованные блоки с уникальным `block_id`.
 
-* **Частично:** экраны принимают инжектируемый `BlockViewTracker` и сбрасывают сессию при dispose. Точное вычисление доли видимой площади по viewport — **follow-up** (требует layout-интроспекции Material ScrollView: позиции блоков в контенте + `ScrollController.position`).
+* **Реализовано (вариант A):** `BlockViewReporter` — обёртка блока, подписывается на `Scrollable.position` и сообщает трекеру видимость (1.0/0.0) по scroll offset. Подключен в `ScenarioScreen` (`scenario_why`, `scenario_games`) и `GameScreen` (`game_carousel`, `game_characteristics`).
+
+* **Follow-up:** точный расчёт ≥50% площади (A-36) — требует layout-интроспекции Material ScrollView.
 
 ### Шаг 3. Трекер видимости
 
@@ -149,3 +151,4 @@ flowchart TD
 | ---------- | ----- | --------- |
 | 2026-09-08 | AID   | Первая версия (drafted). Трекер видимости, порог A-36, реестр block_id. |
 | 2026-09-08 | AID   | Реализовано: `BlockViewTracker`, `logBlockView`, реестр block_id; экраны принимают трекер и сбрасывают сессию; unit-тесты. Точное вычисление viewport — follow-up. |
+| 2026-09-08 | AID   | Вариант A: `BlockViewReporter` — видимость по scroll offset (1.0/0.0), подключен в экраны сценария и игры. Точный расчёт ≥50% — follow-up. |

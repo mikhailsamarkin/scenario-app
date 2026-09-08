@@ -7,10 +7,12 @@
 
 import 'package:flutter/material.dart';
 
+import '../../analytics/analytics_events.dart';
 import '../../analytics/block_view_tracker.dart';
 import '../../data/contract/models.dart';
 import '../../data/firestore/aggregate_repository_interface.dart';
 import '../../supabase_config.dart';
+import 'block_view_reporter.dart';
 
 /// Открывает экран игры (US-E2-03) с контекстом сценария.
 typedef ScenarioOpenGame =
@@ -113,6 +115,7 @@ class _ScenarioScreenState extends State<ScenarioScreen> {
           return _ScenarioContent(
             scenario: scenario,
             onOpenGame: widget.onOpenGame,
+            blockViewTracker: widget.blockViewTracker,
           );
         },
       ),
@@ -134,10 +137,15 @@ class _ScenarioScreenState extends State<ScenarioScreen> {
 }
 
 class _ScenarioContent extends StatelessWidget {
-  const _ScenarioContent({required this.scenario, required this.onOpenGame});
+  const _ScenarioContent({
+    required this.scenario,
+    required this.onOpenGame,
+    this.blockViewTracker,
+  });
 
   final ScenarioPublic scenario;
   final ScenarioOpenGame onOpenGame;
+  final BlockViewTracker? blockViewTracker;
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +165,16 @@ class _ScenarioContent extends StatelessWidget {
               ],
               // Блок обоснования — выше списка игр (AC-01, FR-M-2).
               const SizedBox(height: 16),
-              Text('Почему эти игры подходят', style: textTheme.titleLarge),
+              BlockViewReporter(
+                blockId: kBlockScenarioWhy,
+                tracker: blockViewTracker,
+                topOffset: 16,
+                height: 120,
+                child: Text(
+                  'Почему эти игры подходят',
+                  style: textTheme.titleLarge,
+                ),
+              ),
               const SizedBox(height: 8),
               // Plain text с сохранением переносов \n (AC-02, A-4a).
               Text(
@@ -168,12 +185,22 @@ class _ScenarioContent extends StatelessWidget {
           ),
         ),
         // Список игр в порядке из данных (AC-01).
-        for (final game in scenario.games)
-          _GameTile(
-            game: game,
-            scenarioId: scenario.id,
-            onOpenGame: onOpenGame,
+        BlockViewReporter(
+          blockId: kBlockScenarioGames,
+          tracker: blockViewTracker,
+          topOffset: 200,
+          height: 400,
+          child: Column(
+            children: [
+              for (final game in scenario.games)
+                _GameTile(
+                  game: game,
+                  scenarioId: scenario.id,
+                  onOpenGame: onOpenGame,
+                ),
+            ],
           ),
+        ),
       ],
     );
   }

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'analytics/analytics_events.dart';
 import 'analytics/analytics_service.dart';
+import 'analytics/block_view_tracker.dart';
 import 'data/firestore/aggregate_repository_interface.dart';
 import 'features/about/about_screen.dart';
 import 'features/about/url_launcher.dart';
@@ -73,6 +74,7 @@ class _ScenarioAppState extends State<ScenarioApp> {
   late final PushDeepLinkService _deepLinkService;
   late final UniversalLinkService _universalLinkService;
   late final AnalyticsService _analytics;
+  late final BlockViewTracker _blockViewTracker;
   StreamSubscription<String?>? _deepLinkSub;
   StreamSubscription<String?>? _universalLinkSub;
 
@@ -88,6 +90,7 @@ class _ScenarioAppState extends State<ScenarioApp> {
     _analytics = AnalyticsService(
       widget.analyticsLogger ?? FirebaseAnalyticsLogger(FirebaseAnalytics.instance),
     );
+    _blockViewTracker = BlockViewTracker(_analytics);
     _deepLinkService = PushDeepLinkService(
       widget.deepLinkSource ??
           FirebaseMessagingDeepLinkSource(FirebaseMessaging.instance),
@@ -146,6 +149,7 @@ class _ScenarioAppState extends State<ScenarioApp> {
         builder: (_) => _ScenarioRoute(
           scenarioId: scenarioId,
           repository: widget.repository,
+          blockViewTracker: _blockViewTracker,
         ),
       ),
     );
@@ -169,6 +173,7 @@ class _ScenarioAppState extends State<ScenarioApp> {
                   repository: widget.repository,
                   analytics: _analytics,
                   urlLauncher: widget.urlLauncher ?? PlatformUrlLauncher(),
+                  blockViewTracker: _blockViewTracker,
                 );
               }
               return _OnboardingRoute(
@@ -182,6 +187,7 @@ class _ScenarioAppState extends State<ScenarioApp> {
                         repository: widget.repository,
                         analytics: _analytics,
                         urlLauncher: widget.urlLauncher ?? PlatformUrlLauncher(),
+                        blockViewTracker: _blockViewTracker,
                       ),
                     ),
                   );
@@ -228,11 +234,17 @@ class _OnboardingRoute extends StatelessWidget {
 
 /// Маршрут главного экрана (витрина сценариев).
 class _HomeRoute extends StatelessWidget {
-  const _HomeRoute({required this.repository, required this.analytics, required this.urlLauncher});
+  const _HomeRoute({
+    required this.repository,
+    required this.analytics,
+    required this.urlLauncher,
+    required this.blockViewTracker,
+  });
 
   final AggregateRepository repository;
   final AnalyticsService analytics;
   final UrlLauncher urlLauncher;
+  final BlockViewTracker blockViewTracker;
 
   @override
   Widget build(BuildContext context) {
@@ -252,6 +264,7 @@ class _HomeRoute extends StatelessWidget {
             builder: (_) => _ScenarioRoute(
               scenarioId: scenarioId,
               repository: repository,
+              blockViewTracker: blockViewTracker,
             ),
           ),
         );
@@ -274,10 +287,15 @@ class _AboutRoute extends StatelessWidget {
 
 /// Маршрут экрана сценария.
 class _ScenarioRoute extends StatelessWidget {
-  const _ScenarioRoute({required this.scenarioId, required this.repository});
+  const _ScenarioRoute({
+    required this.scenarioId,
+    required this.repository,
+    required this.blockViewTracker,
+  });
 
   final String scenarioId;
   final AggregateRepository repository;
+  final BlockViewTracker blockViewTracker;
 
   @override
   Widget build(BuildContext context) {
@@ -285,6 +303,7 @@ class _ScenarioRoute extends StatelessWidget {
     return ScenarioScreen(
       scenarioId: scenarioId,
       repository: repository,
+      blockViewTracker: blockViewTracker,
       onShare: (scenario) {
         shareService.shareScenario(scenario);
       },
@@ -296,6 +315,7 @@ class _ScenarioRoute extends StatelessWidget {
               gameId: gameId,
               scenarioId: scenarioId,
               repository: repository,
+              blockViewTracker: blockViewTracker,
             ),
           ),
         );
@@ -310,11 +330,13 @@ class _GameRoute extends StatelessWidget {
     required this.gameId,
     required this.scenarioId,
     required this.repository,
+    required this.blockViewTracker,
   });
 
   final String gameId;
   final String scenarioId;
   final AggregateRepository repository;
+  final BlockViewTracker blockViewTracker;
 
   @override
   Widget build(BuildContext context) {
@@ -322,6 +344,7 @@ class _GameRoute extends StatelessWidget {
       gameId: gameId,
       scenarioId: scenarioId,
       repository: repository,
+      blockViewTracker: blockViewTracker,
     );
   }
 }

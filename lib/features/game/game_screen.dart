@@ -7,12 +7,14 @@
 
 import 'package:flutter/material.dart';
 
+import '../../analytics/analytics_events.dart';
 import '../../analytics/block_view_tracker.dart';
 import '../../cache/cached_network_image_widget.dart';
 import '../../data/contract/enums.dart';
 import '../../data/contract/models.dart';
 import '../../data/firestore/aggregate_repository_interface.dart';
 import '../../supabase_config.dart';
+import '../scenario/block_view_reporter.dart';
 
 /// Подпись на русском для `DurationBucket` (ED-2; у enum нет uiLabel).
 String durationBucketLabel(DurationBucket value) {
@@ -142,6 +144,7 @@ class _GameScreenState extends State<GameScreen> {
             game: game,
             scenarioId: widget.scenarioId,
             slideImageBuilder: widget.slideImageBuilder,
+            blockViewTracker: widget.blockViewTracker,
           );
         },
       ),
@@ -167,11 +170,13 @@ class _GameContent extends StatelessWidget {
     required this.game,
     required this.scenarioId,
     required this.slideImageBuilder,
+    this.blockViewTracker,
   });
 
   final GamePublic game;
   final String scenarioId;
   final GameSlideImageBuilder slideImageBuilder;
+  final BlockViewTracker? blockViewTracker;
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +194,13 @@ class _GameContent extends StatelessWidget {
 
     return ListView(
       children: [
-        _Carousel(slices: game.carousel, imageBuilder: slideImageBuilder),
+        BlockViewReporter(
+          blockId: kBlockGameCarousel,
+          tracker: blockViewTracker,
+          topOffset: 0,
+          height: 240,
+          child: _Carousel(slices: game.carousel, imageBuilder: slideImageBuilder),
+        ),
         Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -197,7 +208,13 @@ class _GameContent extends StatelessWidget {
             children: [
               Text(game.title, style: textTheme.headlineMedium),
               const SizedBox(height: 8),
-              _Characteristics(game: game),
+              BlockViewReporter(
+                blockId: kBlockGameCharacteristics,
+                tracker: blockViewTracker,
+                topOffset: 300,
+                height: 120,
+                child: _Characteristics(game: game),
+              ),
               if (scenario != null) ...[
                 const SizedBox(height: 16),
                 Text(scenario.shortDescription, style: textTheme.bodyLarge),
