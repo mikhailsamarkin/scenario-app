@@ -69,13 +69,13 @@ flowchart TD
 
 * Параметры `min_supported_build`, `content_schema_version` в Firebase Remote Config.
 
-* **Не реализовано:** требует Firebase Remote Config (follow-up, US-E8-04).
+* **Реализовано:** `firebase_remote_config: ^5.5.0` (совместима с firebase_core 3.x); `FirebaseRemoteConfigSource` читает `min_supported_build` и `content_schema_version` через `fetchAndActivate()`.
 
 ### Шаг 2. Проверка совместимости
 
 * `ForceUpdateChecker`: сравнение с локальными значениями сборки и версии схемы.
 
-* **Реализовано:** `force_update_checker.dart` — `ForceUpdateChecker` + `RemoteConfigSource` (абстракция); константы `kCurrentBuildNumber=1`, `kSupportedContentSchemaVersion=2`.
+* **Реализовано:** `force_update_checker.dart` — `ForceUpdateChecker` + `RemoteConfigSource` (абстракция) + `FirebaseRemoteConfigSource` (реальная интеграция); константы `kCurrentBuildNumber=1`, `kSupportedContentSchemaVersion=2`.
 
 ### Шаг 3. Блокирующий экран
 
@@ -140,3 +140,4 @@ flowchart TD
 | ---------- | ----- | --------- |
 | 2026-09-08 | AID   | Первая версия (drafted). Remote Config, ForceUpdateChecker, блокирующий экран. |
 | 2026-09-08 | AID   | Реализовано: `ForceUpdateChecker`, `RemoteConfigSource`, placeholder `UpdateScreen`; unit/widget-тесты. Реальная интеграция RC и готовый экран — **US-E8-04**. |
+| 2026-09-08 | AID   | Реализована реальная интеграция Firebase Remote Config: `FirebaseRemoteConfigSource` (fetchAndActivate + getInt). Осталось: готовый экран — **US-E8-04**. |

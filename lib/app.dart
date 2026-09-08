@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
 import 'analytics/analytics_events.dart';
@@ -82,7 +83,7 @@ class _ScenarioAppState extends State<ScenarioApp> {
         (widget.onboardingStatusSource ?? SharedPrefsOnboardingStatus())
             .isCompleted();
     _forceUpdateFuture = ForceUpdateChecker(
-      widget.remoteConfigSource ?? _NoForceUpdateSource(),
+      widget.remoteConfigSource ?? FirebaseRemoteConfigSource(FirebaseRemoteConfig.instance),
     ).isUpdateRequired();
     _analytics = AnalyticsService(
       widget.analyticsLogger ?? FirebaseAnalyticsLogger(FirebaseAnalytics.instance),
@@ -192,14 +193,6 @@ class _ScenarioAppState extends State<ScenarioApp> {
       ),
     );
   }
-}
-
-/// Источник Remote Config по умолчанию: не форсировать обновление.
-///
-/// Реальная интеграция с Firebase Remote Config — follow-up (US-E8-04).
-class _NoForceUpdateSource implements RemoteConfigSource {
-  @override
-  Future<RemoteConfigValues> fetch() async => RemoteConfigValues(0, 0);
 }
 
 /// Маршрут экрана принудительного обновления (US-E6-06).

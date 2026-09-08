@@ -16,6 +16,7 @@ import 'package:scenario/data/firestore/aggregate_repository_interface.dart';
 import 'package:scenario/features/onboarding/onboarding_prefs.dart';
 import 'package:scenario/features/link/universal_link_service.dart';
 import 'package:scenario/features/push/push_deep_link_service.dart';
+import 'package:scenario/force_update/force_update_checker.dart';
 
 /// Фейковый репозиторий с заданной витриной и сценарием.
 class _FakeRepository implements AggregateRepository {
@@ -118,6 +119,12 @@ class _FakeAnalyticsLogger implements AnalyticsLogger {
   }
 }
 
+/// Фейковый Remote Config: не форсирует обновление.
+class _NoForceUpdateSource implements RemoteConfigSource {
+  @override
+  Future<RemoteConfigValues> fetch() async => RemoteConfigValues(0, 0);
+}
+
 ScenarioApp _app(AggregateRepository repo, {required bool onboarding}) {
   return ScenarioApp(
     repository: repo,
@@ -125,6 +132,7 @@ ScenarioApp _app(AggregateRepository repo, {required bool onboarding}) {
     linkSource: _NoLinkSource(),
     onboardingStatusSource: _OnboardingStatus(onboarding),
     analyticsLogger: _FakeAnalyticsLogger(),
+    remoteConfigSource: _NoForceUpdateSource(),
   );
 }
 

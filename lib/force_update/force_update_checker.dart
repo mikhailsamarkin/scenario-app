@@ -7,11 +7,19 @@
 
 import 'dart:core';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+
 /// Текущий номер сборки (из `version` в pubspec.yaml: `1.0.0+1`).
 const int kCurrentBuildNumber = 1;
 
 /// Версия схемы контента, поддерживаемая клиентом (A-44, ADR-013).
 const int kSupportedContentSchemaVersion = 2;
+
+/// Ключ параметра Remote Config: минимально поддерживаемая сборка (A-45).
+const String kRemoteConfigMinBuild = 'min_supported_build';
+
+/// Ключ параметра Remote Config: версия схемы контента (A-45, ADR-013).
+const String kRemoteConfigSchemaVersion = 'content_schema_version';
 
 /// Значения Remote Config, влияющие на принудительное обновление (A-45).
 class RemoteConfigValues {
@@ -25,10 +33,24 @@ class RemoteConfigValues {
 }
 
 /// Источник Remote Config (абстракция для тестируемости).
-///
-/// Реальная интеграция с Firebase Remote Config — follow-up (US-E8-04).
 abstract interface class RemoteConfigSource {
   Future<RemoteConfigValues> fetch();
+}
+
+/// Реализация поверх Firebase Remote Config (US-E6-06, A-45).
+class FirebaseRemoteConfigSource implements RemoteConfigSource {
+  FirebaseRemoteConfigSource(this._config);
+
+  final FirebaseRemoteConfig _config;
+
+  @override
+  Future<RemoteConfigValues> fetch() async {
+    await _config.fetchAndActivate();
+    return RemoteConfigValues(
+      _config.getInt(kRemoteConfigMinBuild),
+      _config.getInt(kRemoteConfigSchemaVersion),
+    );
+  }
 }
 
 /// Проверяет совместимость сборки и схемы контента (A-45).

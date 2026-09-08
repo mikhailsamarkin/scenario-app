@@ -63,6 +63,9 @@ dependencies:
   # Отчёты о сбоях (US-E6-05): Firebase Crashlytics (A-41).
   firebase_crashlytics: ^4.3.10
 
+  # Принудительное обновление (US-E6-06): Firebase Remote Config (A-45).
+  firebase_remote_config: ^5.5.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8

@@ -77,7 +77,7 @@ flowchart TD
 
 * `scenario_screen.dart` / `game_screen.dart`: именованные блоки с уникальным `block_id`.
 
-* **Частично:** экраны принимают инжектируемый `BlockViewTracker` и сбрасывают сессию при dispose. Точное вычисление доли видимой площади по viewport — follow-up (требует layout-интроспекции Material ScrollView).
+* **Частично:** экраны принимают инжектируемый `BlockViewTracker` и сбрасывают сессию при dispose. Точное вычисление доли видимой площади по viewport — **follow-up** (требует layout-интроспекции Material ScrollView: позиции блоков в контенте + `ScrollController.position`).
 
 ### Шаг 3. Трекер видимости
 
