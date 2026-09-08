@@ -90,6 +90,7 @@ class GroupRef {
     required this.semanticGroupId,
     required this.slug,
     required this.title,
+    this.isPastArchive = false,
   });
 
   factory GroupRef.fromJson(Map<String, dynamic> json) {
@@ -97,6 +98,7 @@ class GroupRef {
       semanticGroupId: json['semanticGroupId'] as String,
       slug: json['slug'] as String,
       title: json['title'] as String,
+      isPastArchive: json['isPastArchive'] as bool? ?? false,
     );
   }
 
@@ -104,10 +106,14 @@ class GroupRef {
   final String slug;
   final String title;
 
+  /// Признак архивной группы («Сценарии прошлого», US-E7-02).
+  final bool isPastArchive;
+
   Map<String, dynamic> toJson() => {
         'semanticGroupId': semanticGroupId,
         'slug': slug,
         'title': title,
+        'isPastArchive': isPastArchive,
       };
 }
 

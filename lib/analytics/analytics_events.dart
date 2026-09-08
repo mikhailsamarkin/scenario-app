@@ -55,9 +55,10 @@ const String kBlockGameCharacteristics = 'game_characteristics';
 /// Источник открытия сценария (SP-E6-02, A-35).
 ///
 /// Значения соответствуют use-cases §6.2; без произвольных строк (AC-01).
-/// Источники group/past не реализованы до E7.
 enum ScenarioOpenSource {
   home('home'),
+  group('group'),
+  past('past'),
   push('push'),
   deeplink('deeplink'),
   share('share');

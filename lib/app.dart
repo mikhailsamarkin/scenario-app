@@ -270,7 +270,7 @@ class _HomeRoute extends StatelessWidget {
           ),
         );
       },
-      onOpenGroup: (context, groupId) {
+      onOpenGroup: (context, groupId, isPastArchive) {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -278,6 +278,7 @@ class _HomeRoute extends StatelessWidget {
               groupId: groupId,
               repository: repository,
               blockViewTracker: blockViewTracker,
+              source: isPastArchive ? ScenarioOpenSource.past : ScenarioOpenSource.group,
             ),
           ),
         );
@@ -292,11 +293,13 @@ class _GroupRoute extends StatelessWidget {
     required this.groupId,
     required this.repository,
     required this.blockViewTracker,
+    required this.source,
   });
 
   final String groupId;
   final AggregateRepository repository;
   final BlockViewTracker blockViewTracker;
+  final ScenarioOpenSource source;
 
   @override
   Widget build(BuildContext context) {

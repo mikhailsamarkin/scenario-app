@@ -152,7 +152,7 @@ void main() {
     await tester.pumpWidget(_wrap(HomeScreen(
       repository: _FakeRepository(feed),
       onOpenScenario: (context, scenarioId) {},
-      onOpenGroup: (context, groupId) {
+      onOpenGroup: (context, groupId, isPastArchive) {
         openedGroupId = groupId;
       },
     )));
@@ -166,5 +166,47 @@ void main() {
     await tester.tap(find.text('Вдвоём'));
     await tester.pump();
     expect(openedGroupId, equals('vdvoem'));
+  });
+
+  testWidgets('US-E7-02: архивные группы в «Сценарии прошлого», без дубля',
+      (tester) async {
+    var openedGroupId = '';
+    var openedIsPast = false;
+    final feed = HomeFeed(
+      contentVersion: 1,
+      updatedAt: DateTime.utc(2026, 9, 7),
+      carousel: const [],
+      vitrine: const [],
+      groups: const [
+        GroupRef(semanticGroupId: 'vdvoem', slug: 'vdvoem', title: 'Вдвоём'),
+        GroupRef(
+          semanticGroupId: 'arhiv-zima',
+          slug: 'arhiv-zima',
+          title: 'Зимняя подборка',
+          isPastArchive: true,
+        ),
+      ],
+    );
+    await tester.pumpWidget(_wrap(HomeScreen(
+      repository: _FakeRepository(feed),
+      onOpenScenario: (context, scenarioId) {},
+      onOpenGroup: (context, groupId, isPastArchive) {
+        openedGroupId = groupId;
+        openedIsPast = isPastArchive;
+      },
+    )));
+    await tester.pump();
+
+    // Активная группа — в «Подборки», архивная — в «Сценарии прошлого».
+    expect(find.text('Подборки'), findsOneWidget);
+    expect(find.text('Сценарии прошлого'), findsOneWidget);
+    expect(find.text('Вдвоём'), findsOneWidget);
+    expect(find.text('Зимняя подборка'), findsOneWidget);
+
+    // Тап по архивной группе передаёт isPastArchive=true.
+    await tester.tap(find.text('Зимняя подборка'));
+    await tester.pump();
+    expect(openedGroupId, equals('arhiv-zima'));
+    expect(openedIsPast, isTrue);
   });
 }

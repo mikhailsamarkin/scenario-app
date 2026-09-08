@@ -137,7 +137,12 @@ async function importGroups({ project, dryRun }) {
       await db.doc(`semantic_groups_public/${group.id}`).set(publicDoc);
       console.log(`written semantic_groups_public/${group.id} (scenarios=${cards.length})`);
     }
-    groupRefs.push({ semanticGroupId: group.id, slug: group.slug, title: group.title });
+    groupRefs.push({
+      semanticGroupId: group.id,
+      slug: group.slug,
+      title: group.title,
+      isPastArchive: group.isPastArchive ?? false,
+    });
   }
 
   // Обновить home_feed/main.groups (GroupRef).

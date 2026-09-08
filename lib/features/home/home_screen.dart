@@ -13,7 +13,8 @@ import '../../supabase_config.dart';
 typedef HomeOpenScenario = void Function(BuildContext context, String scenarioId);
 
 /// Открывает экран группы смысла (US-E7-01).
-typedef HomeOpenGroup = void Function(BuildContext context, String groupId);
+typedef HomeOpenGroup =
+    void Function(BuildContext context, String groupId, bool isPastArchive);
 
 /// Открывает экран «О приложении» (US-E6-04).
 typedef HomeOpenAbout = void Function(BuildContext context);
@@ -147,6 +148,8 @@ class _HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final activeGroups = feed.groups.where((g) => !g.isPastArchive).toList();
+    final pastGroups = feed.groups.where((g) => g.isPastArchive).toList();
     if (feed.vitrine.isEmpty && feed.groups.isEmpty) {
       return const Center(child: Text('Пока нет сценариев'));
     }
@@ -163,12 +166,22 @@ class _HomeContent extends StatelessWidget {
             card: card,
             onOpenScenario: onOpenScenario,
           ),
-        // Группы смысла (US-E7-01, БТ §7.1).
-        if (feed.groups.isNotEmpty)
+        // Активные группы смысла (US-E7-01, БТ §7.1).
+        if (activeGroups.isNotEmpty)
           ListTile(
             title: Text('Подборки', style: textTheme.titleLarge),
           ),
-        for (final group in feed.groups)
+        for (final group in activeGroups)
+          _GroupTile(
+            group: group,
+            onOpenGroup: onOpenGroup,
+          ),
+        // «Сценарии прошлого» (US-E7-02, CR-3).
+        if (pastGroups.isNotEmpty)
+          ListTile(
+            title: Text('Сценарии прошлого', style: textTheme.titleLarge),
+          ),
+        for (final group in pastGroups)
           _GroupTile(
             group: group,
             onOpenGroup: onOpenGroup,
@@ -191,7 +204,7 @@ class _GroupTile extends StatelessWidget {
       title: Text(group.title),
       trailing: const Icon(Icons.chevron_right),
       onTap: () {
-        onOpenGroup?.call(context, group.semanticGroupId);
+        onOpenGroup?.call(context, group.semanticGroupId, group.isPastArchive);
       },
     );
   }

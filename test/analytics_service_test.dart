@@ -43,6 +43,17 @@ void main() {
     expect(logger.events[0].$2, equals({kParamScenarioId: 's1', kParamSource: 'push'}));
   });
 
+  test('AC-01: scenario_open с source=group и source=past (US-E7)', () async {
+    final logger = _FakeLogger();
+    final service = AnalyticsService(logger);
+
+    await service.logScenarioOpen('s1', ScenarioOpenSource.group);
+    await service.logScenarioOpen('s1', ScenarioOpenSource.past);
+
+    expect(logger.events[0].$2, equals({kParamScenarioId: 's1', kParamSource: 'group'}));
+    expect(logger.events[1].$2, equals({kParamScenarioId: 's1', kParamSource: 'past'}));
+  });
+
   test('AC-01: game_open с game_id из реестра', () async {
     final logger = _FakeLogger();
     final service = AnalyticsService(logger);
