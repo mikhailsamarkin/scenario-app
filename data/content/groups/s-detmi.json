@@ -1,0 +1,14 @@
+{
+  "id": "s-detmi",
+  "slug": "s-detmi",
+  "title": "С детьми",
+  "listOrder": 2,
+  "isPastArchive": false,
+  "scenarios": [
+    {
+      "scenarioId": "semya",
+      "slug": "semya",
+      "title": "Семейный вечер"
+    }
+  ]
+}

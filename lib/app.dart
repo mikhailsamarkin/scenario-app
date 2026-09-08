@@ -19,6 +19,7 @@ import 'data/firestore/aggregate_repository_interface.dart';
 import 'features/about/about_screen.dart';
 import 'features/about/url_launcher.dart';
 import 'features/game/game_screen.dart';
+import 'features/group/group_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/link/universal_link_service.dart';
 import 'features/onboarding/onboarding_prefs.dart';
@@ -258,6 +259,51 @@ class _HomeRoute extends StatelessWidget {
       },
       onOpenScenario: (context, scenarioId) {
         analytics.logScenarioOpen(scenarioId, ScenarioOpenSource.home);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => _ScenarioRoute(
+              scenarioId: scenarioId,
+              repository: repository,
+              blockViewTracker: blockViewTracker,
+            ),
+          ),
+        );
+      },
+      onOpenGroup: (context, groupId) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => _GroupRoute(
+              groupId: groupId,
+              repository: repository,
+              blockViewTracker: blockViewTracker,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Маршрут экрана группы смысла (US-E7-01).
+class _GroupRoute extends StatelessWidget {
+  const _GroupRoute({
+    required this.groupId,
+    required this.repository,
+    required this.blockViewTracker,
+  });
+
+  final String groupId;
+  final AggregateRepository repository;
+  final BlockViewTracker blockViewTracker;
+
+  @override
+  Widget build(BuildContext context) {
+    return GroupScreen(
+      groupId: groupId,
+      repository: repository,
+      onOpenScenario: (context, scenarioId) {
         Navigator.push(
           context,
           MaterialPageRoute(

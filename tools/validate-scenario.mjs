@@ -119,6 +119,23 @@ export function validateScenario(json, knownGameIds = null) {
     errors.push('vitrineOrder: обязателен при onHomeVitrine: true (CR-4)');
   }
 
+  // Группы смысла (US-E7-01, БТ §7.1): массив id групп.
+  if (json.semanticGroupIds !== undefined) {
+    if (!Array.isArray(json.semanticGroupIds)) {
+      errors.push('semanticGroupIds: ожидается массив id групп смысла');
+    } else {
+      const seen = new Set();
+      for (const gid of json.semanticGroupIds) {
+        if (!isNonEmptyString(gid)) {
+          errors.push('semanticGroupIds: каждый id — непустая строка');
+        } else if (seen.has(gid)) {
+          errors.push(`semanticGroupIds: группа "${gid}" дублируется`);
+        }
+        seen.add(gid);
+      }
+    }
+  }
+
   if (!Array.isArray(json.games)) {
     errors.push('games: обязательный массив связок сценарий–игра');
   } else {

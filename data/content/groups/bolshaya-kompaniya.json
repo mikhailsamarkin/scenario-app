@@ -1,0 +1,14 @@
+{
+  "id": "bolshaya-kompaniya",
+  "slug": "bolshaya-kompaniya",
+  "title": "Большая компания",
+  "listOrder": 3,
+  "isPastArchive": false,
+  "scenarios": [
+    {
+      "scenarioId": "vecherinka",
+      "slug": "vecherinka",
+      "title": "Вечеринка"
+    }
+  ]
+}

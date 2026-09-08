@@ -237,6 +237,7 @@ async function publishScenario({ project, file, dryRun }) {
     ...(scenario.shareImageUrl ? { shareImageUrl: scenario.shareImageUrl } : {}),
     ...(scenario.seoTitle ? { seoTitle: scenario.seoTitle } : {}),
     ...(scenario.seoDescription ? { seoDescription: scenario.seoDescription } : {}),
+    ...(scenario.semanticGroupIds ? { semanticGroupIds: scenario.semanticGroupIds } : {}),
     createdAt: scenario.createdAt ?? now,
     updatedAt: now,
   };
@@ -307,7 +308,7 @@ async function publishScenario({ project, file, dryRun }) {
     ...(scenario.shareImageUrl ? { shareImageUrl: scenario.shareImageUrl } : {}),
     ...(scenario.publishedAt ? { publishedAt: scenario.publishedAt } : {}),
     games: buildScenarioGameRefs(scenario.games, games),
-    semanticGroupIds: [],
+    semanticGroupIds: scenario.semanticGroupIds ?? [],
     contentVersion: nextVersion,
     updatedAt: now,
   };

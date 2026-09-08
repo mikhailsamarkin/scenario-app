@@ -12,6 +12,9 @@ import '../../supabase_config.dart';
 /// Открывает экран сценария (US-E2-02).
 typedef HomeOpenScenario = void Function(BuildContext context, String scenarioId);
 
+/// Открывает экран группы смысла (US-E7-01).
+typedef HomeOpenGroup = void Function(BuildContext context, String groupId);
+
 /// Открывает экран «О приложении» (US-E6-04).
 typedef HomeOpenAbout = void Function(BuildContext context);
 
@@ -21,6 +24,7 @@ class HomeScreen extends StatefulWidget {
     super.key,
     required this.repository,
     required this.onOpenScenario,
+    this.onOpenGroup,
     this.onOpenAbout,
     this.isOffline = false,
   });
@@ -30,6 +34,9 @@ class HomeScreen extends StatefulWidget {
 
   /// Переход на экран сценария (US-E2-02).
   final HomeOpenScenario onOpenScenario;
+
+  /// Переход на экран группы смысла (US-E7-01).
+  final HomeOpenGroup? onOpenGroup;
 
   /// Переход на экран «О приложении» (US-E6-04).
   final HomeOpenAbout? onOpenAbout;
@@ -102,7 +109,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             }
             return const Center(child: CircularProgressIndicator());
           }
-          return _HomeContent(feed: feed, onOpenScenario: widget.onOpenScenario);
+          return _HomeContent(
+            feed: feed,
+            onOpenScenario: widget.onOpenScenario,
+            onOpenGroup: widget.onOpenGroup,
+          );
         },
       ),
     );
@@ -123,24 +134,64 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 }
 
 class _HomeContent extends StatelessWidget {
-  const _HomeContent({required this.feed, required this.onOpenScenario});
+  const _HomeContent({
+    required this.feed,
+    required this.onOpenScenario,
+    this.onOpenGroup,
+  });
 
   final HomeFeed feed;
   final HomeOpenScenario onOpenScenario;
+  final HomeOpenGroup? onOpenGroup;
 
   @override
   Widget build(BuildContext context) {
-    if (feed.vitrine.isEmpty) {
+    final textTheme = Theme.of(context).textTheme;
+    if (feed.vitrine.isEmpty && feed.groups.isEmpty) {
       return const Center(child: Text('Пока нет сценариев'));
     }
-    return ListView.builder(
-      itemCount: feed.vitrine.length,
-      itemBuilder: (context, index) {
-        final card = feed.vitrine[index];
-        return _ScenarioCardTile(
-          card: card,
-          onOpenScenario: onOpenScenario,
-        );
+    return ListView(
+      children: [
+        // Витрина (AC-01).
+        if (feed.vitrine.isNotEmpty)
+          ListTile(
+            title: Text('Витрина', style: textTheme.titleLarge),
+            subtitle: Text('Редакторский выбор'),
+          ),
+        for (final card in feed.vitrine)
+          _ScenarioCardTile(
+            card: card,
+            onOpenScenario: onOpenScenario,
+          ),
+        // Группы смысла (US-E7-01, БТ §7.1).
+        if (feed.groups.isNotEmpty)
+          ListTile(
+            title: Text('Подборки', style: textTheme.titleLarge),
+          ),
+        for (final group in feed.groups)
+          _GroupTile(
+            group: group,
+            onOpenGroup: onOpenGroup,
+          ),
+      ],
+    );
+  }
+}
+
+/// Карточка группы смысла на главном экране (US-E7-01).
+class _GroupTile extends StatelessWidget {
+  const _GroupTile({required this.group, required this.onOpenGroup});
+
+  final GroupRef group;
+  final HomeOpenGroup? onOpenGroup;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(group.title),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () {
+        onOpenGroup?.call(context, group.semanticGroupId);
       },
     );
   }

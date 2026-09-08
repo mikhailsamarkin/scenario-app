@@ -136,6 +136,7 @@
 | SP-E6-04 | [e6-privacy-policy-link.md](../specs/e6-privacy-policy-link.md) | US-E6-04 |
 | SP-E6-05 | [e6-crashlytics.md](../specs/e6-crashlytics.md) | US-E6-05 |
 | SP-E6-06 | [e6-force-update-remote-config.md](../specs/e6-force-update-remote-config.md) | US-E6-06 |
+| SP-E7-01 | [e7-meaning-groups-home.md](../specs/e7-meaning-groups-home.md) | US-E7-01 |
 
 ---
 

@@ -135,4 +135,36 @@ void main() {
     expect(find.text('Вечеринка'), findsOneWidget);
     expect(find.text('Нет сети. Проверьте подключение.'), findsNothing);
   });
+
+  testWidgets('US-E7-01: группы смысла отображаются и открываются',
+      (tester) async {
+    var openedGroupId = '';
+    final feed = HomeFeed(
+      contentVersion: 1,
+      updatedAt: DateTime.utc(2026, 9, 7),
+      carousel: const [],
+      vitrine: const [],
+      groups: const [
+        GroupRef(semanticGroupId: 'vdvoem', slug: 'vdvoem', title: 'Вдвоём'),
+        GroupRef(semanticGroupId: 's-detmi', slug: 's-detmi', title: 'С детьми'),
+      ],
+    );
+    await tester.pumpWidget(_wrap(HomeScreen(
+      repository: _FakeRepository(feed),
+      onOpenScenario: (context, scenarioId) {},
+      onOpenGroup: (context, groupId) {
+        openedGroupId = groupId;
+      },
+    )));
+    await tester.pump();
+
+    // Группы из данных видны.
+    expect(find.text('Вдвоём'), findsOneWidget);
+    expect(find.text('С детьми'), findsOneWidget);
+
+    // Тап по группе открывает её (AC-02).
+    await tester.tap(find.text('Вдвоём'));
+    await tester.pump();
+    expect(openedGroupId, equals('vdvoem'));
+  });
 }

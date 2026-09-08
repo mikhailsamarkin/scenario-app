@@ -1,0 +1,19 @@
+{
+  "id": "vdvoem",
+  "slug": "vdvoem",
+  "title": "Вдвоём",
+  "listOrder": 1,
+  "isPastArchive": false,
+  "scenarios": [
+    {
+      "scenarioId": "semya",
+      "slug": "semya",
+      "title": "Семейный вечер"
+    },
+    {
+      "scenarioId": "vecherinka",
+      "slug": "vecherinka",
+      "title": "Вечеринка"
+    }
+  ]
+}
