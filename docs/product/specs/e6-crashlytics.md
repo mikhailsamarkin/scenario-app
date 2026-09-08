@@ -2,7 +2,7 @@
 spec_id: SP-E6-05
 title: "Спецификация реализации: Crashlytics — отчёты о сбоях"
 story_id: US-E6-05
-status: drafted
+status: approved
 updated: "2026-09-08"
 ---
 # Спецификация реализации — US-E6-05 «Crashlytics: отчёты о сбоях»

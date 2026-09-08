@@ -2,7 +2,7 @@
 spec_id: SP-E4-04
 title: "Спецификация реализации: предсказуемый билд SSG — бюджет запросов к Firestore"
 story_id: US-E4-04
-status: drafted
+status: approved
 updated: "2026-09-08"
 ---
 # Спецификация реализации — US-E4-04 «Предсказуемый билд SSG: бюджет запросов к Firestore»

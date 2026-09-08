@@ -2,7 +2,7 @@
 spec_id: SP-E6-03
 title: "Спецификация реализации: события block_view с порогом viewport"
 story_id: US-E6-03
-status: drafted
+status: approved
 updated: "2026-09-08"
 ---
 # Спецификация реализации — US-E6-03 «События block_view с порогом viewport»

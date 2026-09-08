@@ -2,7 +2,7 @@
 spec_id: SP-E6-02
 title: "Спецификация реализации: открытия сценария с разбивкой по source и scenario_id"
 story_id: US-E6-02
-status: drafted
+status: approved
 updated: "2026-09-08"
 ---
 # Спецификация реализации — US-E6-02 «Открытия сценария с разбивкой по source и scenario_id»

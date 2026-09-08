@@ -2,7 +2,7 @@
 spec_id: SP-E4-05
 title: "Спецификация реализации: Core Web Vitals и производительность сайта"
 story_id: US-E4-05
-status: drafted
+status: approved
 updated: "2026-09-08"
 ---
 # Спецификация реализации — US-E4-05 «Core Web Vitals и производительность сайта»

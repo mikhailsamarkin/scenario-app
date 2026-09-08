@@ -2,8 +2,8 @@
 spec_id: SP-E5-03
 title: "Спецификация реализации: веб-fallback — OG и сохранение UTM"
 story_id: US-E5-03
-status: drafted
-updated: "2026-09-07"
+status: approved
+updated: "2026-09-08"
 ---
 # Спецификация реализации — US-E5-03 «Веб-fallback: OG и сохранение UTM»
 

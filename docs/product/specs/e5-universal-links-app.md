@@ -2,8 +2,8 @@
 spec_id: SP-E5-02
 title: "Спецификация реализации: Universal Links / App Links — открытие сценария в приложении"
 story_id: US-E5-02
-status: drafted
-updated: "2026-09-07"
+status: approved
+updated: "2026-09-08"
 ---
 # Спецификация реализации — US-E5-02 «Universal Links / App Links»
 

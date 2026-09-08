@@ -2,7 +2,7 @@
 spec_id: SP-E6-06
 title: "Спецификация реализации: принудительное обновление через Remote Config"
 story_id: US-E6-06
-status: drafted
+status: approved
 updated: "2026-09-08"
 ---
 # Спецификация реализации — US-E6-06 «Принудительное обновление через Remote Config»
