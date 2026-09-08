@@ -1,13 +1,19 @@
-// Экран принудительного обновления (SP-E6-06, A-45).
+// Экран принудительного обновления (SP-E8-04, A-45).
 //
 // Блокирует основной контент при несовместимой сборке/схеме (AC-01).
-// Текст и ссылки на сторы — placeholder; готовая политика и CTA — US-E8-04.
+// Показывает текст и CTA в стор (iOS/Android). Ссылки на сторы —
+// placeholder до US-E8-05.
 
 import 'package:flutter/material.dart';
 
-/// Экран «Обновите приложение» (SP-E6-06).
+import '../features/about/url_launcher.dart';
+
+/// Экран «Обновите приложение» (SP-E8-04).
 class UpdateScreen extends StatelessWidget {
-  const UpdateScreen({super.key});
+  const UpdateScreen({super.key, this.urlLauncher});
+
+  /// Открывает ссылку на стор (для тестируемости).
+  final UrlLauncher? urlLauncher;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +26,15 @@ class UpdateScreen extends StatelessWidget {
             const Text('Доступна новая версия приложения.'),
             const SizedBox(height: 12),
             const Text('Обновите приложение, чтобы продолжить.'),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: () {
+                urlLauncher?.launchExternal(
+                  'https://play.google.com/store/apps/details?id=com.scenario.app',
+                );
+              },
+              child: const Text('Обновить'),
+            ),
           ],
         ),
       ),

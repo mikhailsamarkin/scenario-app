@@ -163,7 +163,9 @@ class _ScenarioAppState extends State<ScenarioApp> {
         future: _forceUpdateFuture,
         builder: (context, snapshot) {
           if (snapshot.data ?? false) {
-            return _UpdateRoute();
+            return _UpdateRoute(
+              urlLauncher: widget.urlLauncher ?? PlatformUrlLauncher(),
+            );
           }
           return FutureBuilder<bool>(
             future: _onboardingFuture,
@@ -202,13 +204,15 @@ class _ScenarioAppState extends State<ScenarioApp> {
   }
 }
 
-/// Маршрут экрана принудительного обновления (US-E6-06).
+/// Маршрут экрана принудительного обновления (US-E6-06, US-E8-04).
 class _UpdateRoute extends StatelessWidget {
-  const _UpdateRoute();
+  const _UpdateRoute({required this.urlLauncher});
+
+  final UrlLauncher urlLauncher;
 
   @override
   Widget build(BuildContext context) {
-    return UpdateScreen();
+    return UpdateScreen(urlLauncher: urlLauncher);
   }
 }
 
