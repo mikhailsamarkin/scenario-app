@@ -138,6 +138,12 @@
 | SP-E6-06 | [e6-force-update-remote-config.md](../specs/e6-force-update-remote-config.md) | US-E6-06 |
 | SP-E7-01 | [e7-meaning-groups-home.md](../specs/e7-meaning-groups-home.md) | US-E7-01 |
 | SP-E7-02 | [e7-past-scenarios-archive.md](../specs/e7-past-scenarios-archive.md) | US-E7-02 |
+| SP-E8-01 | [e8-universal-links-domain-config.md](../specs/e8-universal-links-domain-config.md) | US-E8-01 |
+| SP-E8-02 | [e8-privacy-policy-page.md](../specs/e8-privacy-policy-page.md) | US-E8-02 |
+| SP-E8-03 | [e8-privacy-policy-text-validation.md](../specs/e8-privacy-policy-text-validation.md) | US-E8-03 |
+| SP-E8-04 | [e8-force-update-screen.md](../specs/e8-force-update-screen.md) | US-E8-04 |
+| SP-E8-05 | [e8-store-links.md](../specs/e8-store-links.md) | US-E8-05 |
+| SP-E8-06 | [e8-deploy-github-pages.md](../specs/e8-deploy-github-pages.md) | US-E8-06 |
 
 ---
 
