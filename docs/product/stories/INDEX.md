@@ -115,6 +115,9 @@
 | SP-E3-04 | [e3-push-deeplink-scenario.md](../specs/e3-push-deeplink-scenario.md) | US-E3-04 |
 | SP-E4-01 | [e4-seo-urls-scenario-game.md](../specs/e4-seo-urls-scenario-game.md) | US-E4-01 |
 | SP-E4-02 | [e4-site-internal-linking.md](../specs/e4-site-internal-linking.md) | US-E4-02 |
+| SP-E4-03 | [e4-cta-install-app.md](../specs/e4-cta-install-app.md) | US-E4-03 |
+| SP-E4-04 | [e4-ssg-build-query-budget.md](../specs/e4-ssg-build-query-budget.md) | US-E4-04 |
+| SP-E4-05 | [e4-core-web-vitals.md](../specs/e4-core-web-vitals.md) | US-E4-05 |
 | SP-E5-01 | [e5-share-scenario-system-share.md](../specs/e5-share-scenario-system-share.md) | US-E5-01 |
 | SP-E5-02 | [e5-universal-links-app.md](../specs/e5-universal-links-app.md) | US-E5-02 |
 | SP-E5-03 | [e5-web-fallback-og-utm.md](../specs/e5-web-fallback-og-utm.md) | US-E5-03 |
