@@ -91,6 +91,7 @@
 | US-E8-03 | Валидация текста политики конфиденциальности тех. лидом | [e8-privacy-policy-text-validation.md](e8-privacy-policy-text-validation.md) |
 | US-E8-04 | Реализация экрана принудительного обновления (политика и CTA) | [e8-force-update-screen.md](e8-force-update-screen.md) |
 | US-E8-05 | Замена placeholder-ссылок на сторы в CTA | [e8-store-links.md](e8-store-links.md) |
+| US-E8-06 | Деплой сайта на GitHub Pages | [e8-deploy-github-pages.md](e8-deploy-github-pages.md) |
 
 ## Спецификации реализации
 
