@@ -54,8 +54,14 @@ dependencies:
   # Universal Links / App Links (US-E5-02): перехват HTTPS-ссылок (A-24).
   app_links: ^7.2.1
 
+  # Открытие внешних URL (US-E6-04): политика конфиденциальности (SR-PRIV-5).
+  url_launcher: ^6.3.2
+
   # Аналитика (US-E6-01): Firebase Analytics / GA4 (A-34, A-35).
   firebase_analytics: ^11.6.0
+
+  # Отчёты о сбоях (US-E6-05): Firebase Crashlytics (A-41).
+  firebase_crashlytics: ^4.3.10
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../analytics/block_view_tracker.dart';
 import '../../data/contract/models.dart';
 import '../../data/firestore/aggregate_repository_interface.dart';
 import '../../supabase_config.dart';
@@ -27,6 +28,7 @@ class ScenarioScreen extends StatefulWidget {
     required this.onOpenGame,
     this.onShare,
     this.isOffline = false,
+    this.blockViewTracker,
   });
 
   /// ID сценария (`scenario_public/{scenarioId}`).
@@ -44,6 +46,9 @@ class ScenarioScreen extends StatefulWidget {
   /// Офлайн-режим: при отсутствии кэша показать «нет сети» (AC-02).
   final bool isOffline;
 
+  /// Трекер block_view (US-E6-03); null — аналитика не подключена.
+  final BlockViewTracker? blockViewTracker;
+
   @override
   State<ScenarioScreen> createState() => _ScenarioScreenState();
 }
@@ -56,6 +61,13 @@ class _ScenarioScreenState extends State<ScenarioScreen> {
   void initState() {
     super.initState();
     _future = widget.repository.getScenario(widget.scenarioId);
+  }
+
+  @override
+  void dispose() {
+    // Сессия экрана заканчивается при уходе со страницы (US-E6-03, A-36).
+    widget.blockViewTracker?.resetSession();
+    super.dispose();
   }
 
   void _reload() {

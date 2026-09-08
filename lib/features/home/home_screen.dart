@@ -12,12 +12,16 @@ import '../../supabase_config.dart';
 /// Открывает экран сценария (US-E2-02).
 typedef HomeOpenScenario = void Function(BuildContext context, String scenarioId);
 
+/// Открывает экран «О приложении» (US-E6-04).
+typedef HomeOpenAbout = void Function(BuildContext context);
+
 /// Главный экран (SP-E2-01).
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     required this.repository,
     required this.onOpenScenario,
+    this.onOpenAbout,
     this.isOffline = false,
   });
 
@@ -26,6 +30,9 @@ class HomeScreen extends StatefulWidget {
 
   /// Переход на экран сценария (US-E2-02).
   final HomeOpenScenario onOpenScenario;
+
+  /// Переход на экран «О приложении» (US-E6-04).
+  final HomeOpenAbout? onOpenAbout;
 
   /// Офлайн-режим: при отсутствии кэша показать «нет сети» (AC-02).
   final bool isOffline;
@@ -68,7 +75,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Сценарии')),
+      appBar: AppBar(
+        title: const Text('Сценарии'),
+        actions: [
+          if (widget.onOpenAbout != null)
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              tooltip: 'О приложении',
+              onPressed: () {
+                widget.onOpenAbout!(context);
+              },
+            ),
+        ],
+      ),
       body: FutureBuilder<HomeFeed?>(
         future: _future,
         builder: (context, snapshot) {

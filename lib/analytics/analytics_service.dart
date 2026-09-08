@@ -31,11 +31,14 @@ class AnalyticsService {
 
   final AnalyticsLogger _logger;
 
-  /// Открытие сценария (scenario_open).
-  Future<void> logScenarioOpen(String scenarioId) {
+  /// Открытие сценария (scenario_open) с источником (SP-E6-02, A-35).
+  Future<void> logScenarioOpen(String scenarioId, ScenarioOpenSource source) {
     return _logger.logEvent(
       kEventScenarioOpen,
-      parameters: {kParamScenarioId: scenarioId},
+      parameters: {
+        kParamScenarioId: scenarioId,
+        kParamSource: source.storageKey,
+      },
     );
   }
 
@@ -68,6 +71,14 @@ class AnalyticsService {
     return _logger.logEvent(
       kEventShareDismissed,
       parameters: {kParamScenarioId: scenarioId},
+    );
+  }
+
+  /// Достижение блока (block_view, US-E6-03).
+  Future<void> logBlockView(String blockId) {
+    return _logger.logEvent(
+      kEventBlockView,
+      parameters: {kParamBlockId: blockId},
     );
   }
 }

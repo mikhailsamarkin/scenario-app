@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
@@ -15,6 +16,10 @@ void main() async {
   await Firebase.initializeApp(
     options: AppConfig.firebaseOptions,
   );
+
+  // Отчёты о сбоях (US-E6-05, A-41): сбор включён для dev и prod.
+  await FirebaseCrashlytics.instance
+      .setCrashlyticsCollectionEnabled(true);
 
   // Включение Firestore persistence для офлайн-чтения кэша (A-20).
   enableFirestorePersistence();

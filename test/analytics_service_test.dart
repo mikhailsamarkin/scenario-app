@@ -19,16 +19,28 @@ class _FakeLogger implements AnalyticsLogger {
 }
 
 void main() {
-  test('AC-01: scenario_open с scenario_id из реестра', () async {
+  test('AC-01: scenario_open с scenario_id и source из реестра', () async {
     final logger = _FakeLogger();
     final service = AnalyticsService(logger);
 
-    await service.logScenarioOpen('s1');
+    await service.logScenarioOpen('s1', ScenarioOpenSource.home);
 
     expect(logger.events.length, equals(1));
     expect(logger.events[0].$1, equals(kEventScenarioOpen));
     expect(logger.events[0].$1, equals('scenario_open'));
-    expect(logger.events[0].$2, equals({kParamScenarioId: 's1'}));
+    expect(
+      logger.events[0].$2,
+      equals({kParamScenarioId: 's1', kParamSource: 'home'}),
+    );
+  });
+
+  test('AC-01: scenario_open с source=push (US-E6-02)', () async {
+    final logger = _FakeLogger();
+    final service = AnalyticsService(logger);
+
+    await service.logScenarioOpen('s1', ScenarioOpenSource.push);
+
+    expect(logger.events[0].$2, equals({kParamScenarioId: 's1', kParamSource: 'push'}));
   });
 
   test('AC-01: game_open с game_id из реестра', () async {

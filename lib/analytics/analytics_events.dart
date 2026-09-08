@@ -29,3 +29,41 @@ const String kParamGameId = 'game_id';
 
 /// Параметр: источник (home, push, deeplink, share).
 const String kParamSource = 'source';
+
+/// Параметр: id блока (block_view, US-E6-03).
+const String kParamBlockId = 'block_id';
+
+/// Имя события: достижение блока (A-35(3), US-E6-03).
+const String kEventBlockView = 'block_view';
+
+/// Идентификаторы именованных блоков экранов (US-E6-03, A-35).
+///
+/// Стабильны и согласованы с разметкой экранов E2.
+
+/// Блок «почему эти игры подходят» на экране сценария.
+const String kBlockScenarioWhy = 'scenario_why';
+
+/// Список игр на экране сценария.
+const String kBlockScenarioGames = 'scenario_games';
+
+/// Карусель на экране игры.
+const String kBlockGameCarousel = 'game_carousel';
+
+/// Характеристики на экране игры.
+const String kBlockGameCharacteristics = 'game_characteristics';
+
+/// Источник открытия сценария (SP-E6-02, A-35).
+///
+/// Значения соответствуют use-cases §6.2; без произвольных строк (AC-01).
+/// Источники group/past не реализованы до E7.
+enum ScenarioOpenSource {
+  home('home'),
+  push('push'),
+  deeplink('deeplink'),
+  share('share');
+
+  const ScenarioOpenSource(this.storageKey);
+
+  /// Ключ параметра `source` в событии.
+  final String storageKey;
+}

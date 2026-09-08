@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../analytics/block_view_tracker.dart';
 import '../../cache/cached_network_image_widget.dart';
 import '../../data/contract/enums.dart';
 import '../../data/contract/models.dart';
@@ -72,6 +73,7 @@ class GameScreen extends StatefulWidget {
     required this.repository,
     this.slideImageBuilder = _defaultSlideImage,
     this.isOffline = false,
+    this.blockViewTracker,
   });
 
   /// ID игры (`game_public/{gameId}`).
@@ -89,6 +91,9 @@ class GameScreen extends StatefulWidget {
   /// Офлайн-режим: при отсутствии кэша показать «нет сети» (AC-02).
   final bool isOffline;
 
+  /// Трекер block_view (US-E6-03); null — аналитика не подключена.
+  final BlockViewTracker? blockViewTracker;
+
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
@@ -100,6 +105,13 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     _future = widget.repository.getGame(widget.gameId);
+  }
+
+  @override
+  void dispose() {
+    // Сессия экрана заканчивается при уходе со страницы (US-E6-03, A-36).
+    widget.blockViewTracker?.resetSession();
+    super.dispose();
   }
 
   void _reload() {

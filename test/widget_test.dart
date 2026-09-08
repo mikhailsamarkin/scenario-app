@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:scenario/analytics/analytics_service.dart';
 import 'package:scenario/app.dart';
 import 'package:scenario/data/contract/enums.dart';
 import 'package:scenario/data/contract/models.dart';
@@ -107,12 +108,23 @@ HomeFeed _feed() => HomeFeed(
       groups: const [],
     );
 
+/// Фейковый логгер аналитики: запоминает события.
+class _FakeAnalyticsLogger implements AnalyticsLogger {
+  final List<(String, Map<String, Object>?)> events = [];
+
+  @override
+  Future<void> logEvent(String name, {Map<String, Object>? parameters}) async {
+    events.add((name, parameters));
+  }
+}
+
 ScenarioApp _app(AggregateRepository repo, {required bool onboarding}) {
   return ScenarioApp(
     repository: repo,
     deepLinkSource: _NoDeepLinkSource(),
     linkSource: _NoLinkSource(),
     onboardingStatusSource: _OnboardingStatus(onboarding),
+    analyticsLogger: _FakeAnalyticsLogger(),
   );
 }
 
