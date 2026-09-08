@@ -87,6 +87,9 @@
 | ID | Сторя | Файл |
 |----|--------|------|
 | US-E8-01 | Конфигурация Universal Links на домене (AASA / assetlinks) | [e8-universal-links-domain-config.md](e8-universal-links-domain-config.md) |
+| US-E8-02 | Страница политики конфиденциальности на сайте | [e8-privacy-policy-page.md](e8-privacy-policy-page.md) |
+| US-E8-03 | Валидация текста политики конфиденциальности тех. лидом | [e8-privacy-policy-text-validation.md](e8-privacy-policy-text-validation.md) |
+| US-E8-04 | Реализация экрана принудительного обновления (политика и CTA) | [e8-force-update-screen.md](e8-force-update-screen.md) |
 
 ## Спецификации реализации
 
@@ -117,6 +120,11 @@
 | SP-E5-03 | [e5-web-fallback-og-utm.md](../specs/e5-web-fallback-og-utm.md) | US-E5-03 |
 | SP-E5-04 | [e5-share-funnel-analytics.md](../specs/e5-share-funnel-analytics.md) | US-E5-04 |
 | SP-E6-01 | [e6-analytics-events-schema.md](../specs/e6-analytics-events-schema.md) | US-E6-01 |
+| SP-E6-02 | [e6-scenario-opens-by-source.md](../specs/e6-scenario-opens-by-source.md) | US-E6-02 |
+| SP-E6-03 | [e6-block-view-events.md](../specs/e6-block-view-events.md) | US-E6-03 |
+| SP-E6-04 | [e6-privacy-policy-link.md](../specs/e6-privacy-policy-link.md) | US-E6-04 |
+| SP-E6-05 | [e6-crashlytics.md](../specs/e6-crashlytics.md) | US-E6-05 |
+| SP-E6-06 | [e6-force-update-remote-config.md](../specs/e6-force-update-remote-config.md) | US-E6-06 |
 
 ---
 
