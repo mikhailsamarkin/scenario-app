@@ -93,6 +93,12 @@
 | US-E8-05 | Замена placeholder-ссылок на сторы в CTA | [e8-store-links.md](e8-store-links.md) |
 | US-E8-06 | Деплой сайта на GitHub Pages | [e8-deploy-github-pages.md](e8-deploy-github-pages.md) |
 
+## E9. UI-редизайн по Figma
+
+| ID | Сторя | Файл |
+|----|--------|------|
+| US-E9-01 | UI-редизайн экранов по Figma-макетам | [e9-ui-redesign.md](e9-ui-redesign.md) |
+
 ## Спецификации реализации
 
 | ID | Спека | Сторя |
@@ -133,4 +139,4 @@
 
 ---
 
-**Всего:** 35 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
+**Всего:** 42 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
