@@ -70,6 +70,8 @@ flowchart TD
 
 * **Реализовано:** `.github/workflows/build.yml` — `workflow_dispatch`, `npm ci`, `npm run build` с Firebase/Supabase env из секретов.
 
+* **Исправлен предсуществующий баг билда:** папка `scenarios/[id]` переименована в `scenarios/[slug]` (параметр `generateStaticParams` должен совпадать с именем папки). Билд теперь генерирует страницы из sitemap.
+
 * **Блокер:** секреты `NEXT_PUBLIC_FIREBASE_*`/`NEXT_PUBLIC_SUPABASE_*` в GitHub.
 
 ### Шаг 2. Бюджет запросов
