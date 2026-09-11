@@ -1,8 +1,8 @@
-// Widget-тесты главного экрана (SP-E2-01).
+// Widget-тесты главного экрана (SP-E2-01, редизайн SP-E9-01).
 //
-// Покрывают AC-01 (витрина в порядке и составе с сервера) и AC-02
-// (название и опциональный подзаголовок из данных). Чтение — через
-// фейковый AggregateRepository (A-11, A-38).
+// Покрывают AC-01 (витрина в порядке и составе с сервера; шапка-брендблок)
+// и AC-02 (офлайн-состояния). Группы смысла — секциями (US-E7-01/02).
+// Чтение — через фейковый AggregateRepository (A-11, A-38).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -58,7 +58,8 @@ HomeFeed _buildFeed() {
 Widget _wrap(Widget child) => MaterialApp(home: child);
 
 void main() {
-  testWidgets('AC-01: витрина в порядке и составе с сервера', (tester) async {
+  testWidgets('AC-01: шапка-брендблок и витрина в порядке с сервера',
+      (tester) async {
     var openedScenarioId = '';
 
     await tester.pumpWidget(_wrap(HomeScreen(
@@ -69,9 +70,17 @@ void main() {
     )));
     await tester.pump();
 
-    // Обе карточки в порядке из данных.
+    // Брендированная шапка (SP-E9-01) и заголовок витрины.
+    expect(find.text('Scenario'), findsOneWidget);
+    expect(find.text('Что сегодня?'), findsOneWidget);
+    expect(find.text('Витрина'), findsOneWidget);
+    expect(find.text('РЕДАКТОРСКИЙ ВЫБОР'), findsOneWidget);
+
+    // Обе карточки в порядке из данных (подзаголовки на карточках
+    // витрины по макету не показываются).
     expect(find.text('Вечеринка'), findsOneWidget);
     expect(find.text('Семейный вечер'), findsOneWidget);
+    expect(find.text('Для компании друзей'), findsNothing);
 
     // Тап по карточке открывает сценарий (US-E2-02).
     await tester.tap(find.text('Вечеринка'));
@@ -79,22 +88,7 @@ void main() {
     expect(openedScenarioId, equals('s1'));
   });
 
-  testWidgets('AC-02: название и опциональный подзаголовок из данных',
-      (tester) async {
-    await tester.pumpWidget(_wrap(HomeScreen(
-      repository: _FakeRepository(_buildFeed()),
-      onOpenScenario: (context, scenarioId) {},
-    )));
-    await tester.pump();
-
-    // Название и подзаголовок там, где задан.
-    expect(find.text('Вечеринка'), findsOneWidget);
-    expect(find.text('Для компании друзей'), findsOneWidget);
-    // У карточки без подзаголовка — только название.
-    expect(find.text('Семейный вечер'), findsOneWidget);
-  });
-
-  testWidgets('пустая витрина — заглушка', (tester) async {
+  testWidgets('пустая витрина и группы — заглушка', (tester) async {
     final empty = HomeFeed(
       contentVersion: 1,
       updatedAt: DateTime.utc(2026, 9, 7),
@@ -136,7 +130,7 @@ void main() {
     expect(find.text('Нет сети. Проверьте подключение.'), findsNothing);
   });
 
-  testWidgets('US-E7-01: группы смысла отображаются и открываются',
+  testWidgets('US-E7-01: группы смысла — секциями и открываются',
       (tester) async {
     var openedGroupId = '';
     final feed = HomeFeed(
@@ -156,14 +150,14 @@ void main() {
         openedGroupId = groupId;
       },
     )));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    // Группы из данных видны.
-    expect(find.text('Вдвоём'), findsOneWidget);
-    expect(find.text('С детьми'), findsOneWidget);
+    // Секции групп из данных: заголовок секции + карточка группы.
+    expect(find.text('Вдвоём'), findsWidgets);
+    expect(find.text('С детьми'), findsWidgets);
 
-    // Тап по группе открывает её (AC-02).
-    await tester.tap(find.text('Вдвоём'));
+    // Тап по карточке группы открывает её (AC-02).
+    await tester.tap(find.byKey(const ValueKey('home_group_vdvoem')));
     await tester.pump();
     expect(openedGroupId, equals('vdvoem'));
   });
@@ -195,16 +189,22 @@ void main() {
         openedIsPast = isPastArchive;
       },
     )));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    // Активная группа — в «Подборки», архивная — в «Сценарии прошлого».
-    expect(find.text('Подборки'), findsOneWidget);
+    // Активная группа — секцией по названию, архивная — в «Сценарии прошлого».
+    expect(find.text('Вдвоём'), findsWidgets);
     expect(find.text('Сценарии прошлого'), findsOneWidget);
-    expect(find.text('Вдвоём'), findsOneWidget);
-    expect(find.text('Зимняя подборка'), findsOneWidget);
+    expect(find.text('Зимняя подборка'), findsWidgets);
 
-    // Тап по архивной группе передаёт isPastArchive=true.
-    await tester.tap(find.text('Зимняя подборка'));
+    // Тап по архивной группе передаёт isPastArchive=true (карточка ниже
+    // первого экрана — прокрутить).
+    await tester.dragUntilVisible(
+      find.byKey(const ValueKey('home_group_arhiv-zima')),
+      find.byType(ListView),
+      const Offset(0, -150),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('home_group_arhiv-zima')));
     await tester.pump();
     expect(openedGroupId, equals('arhiv-zima'));
     expect(openedIsPast, isTrue);

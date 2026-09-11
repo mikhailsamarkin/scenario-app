@@ -92,6 +92,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Serif-шрифт заголовков (SP-E9-01, docs/figma/design-tokens.md).
+  fonts:
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay-VariableFont_wght.ttf
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

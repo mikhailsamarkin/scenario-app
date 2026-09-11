@@ -1,4 +1,4 @@
-// Widget-тесты экрана группы смысла (SP-E7-01).
+// Widget-тесты экрана группы смысла (SP-E7-01, редизайн SP-E9-01).
 //
 // Покрывают AC-02 (тап по группе → список сценариев из контентной
 // конфигурации). Чтение — через фейковый AggregateRepository (A-11, A-38).
@@ -73,7 +73,7 @@ void main() {
     await tester.pump();
 
     // Заголовок группы и сценарии из данных.
-    expect(find.text('Вдвоём'), findsWidgets);
+    expect(find.text('ВДВОЁМ'), findsWidgets);
     expect(find.text('Семейный вечер'), findsOneWidget);
     expect(find.text('Вечеринка'), findsOneWidget);
 

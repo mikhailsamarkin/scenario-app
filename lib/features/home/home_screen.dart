@@ -1,13 +1,16 @@
-// Главный экран (SP-E2-01): витрина сценариев из `home_feed/main`
-// (FR-M-1, A-12). Название и опциональный подзаголовок (AC-02), порядок
-// и состав с сервера (AC-01). Переход на экран сценария (US-E2-02) —
-// через инжектируемый колбэк для тестируемости.
+// Главный экран (SP-E2-01, редизайн SP-E9-01): брендированная шапка,
+// витрина горизонтальной лентой крупных фото-карточек, группы смысла —
+// секциями (US-E7-01/02). Порядок и состав — с сервера (AC-01);
+// переходы — через инжектируемые колбэки. Вёрстка — по
+// docs/figma/screens/home.md.
 
 import 'package:flutter/material.dart';
 
 import '../../data/contract/models.dart';
 import '../../data/firestore/aggregate_repository_interface.dart';
-import '../../supabase_config.dart';
+import '../../design/app_colors.dart';
+import '../../design/app_typography.dart';
+import '../../design/widgets.dart';
 
 /// Открывает экран сценария (US-E2-02).
 typedef HomeOpenScenario = void Function(BuildContext context, String scenarioId);
@@ -19,7 +22,7 @@ typedef HomeOpenGroup =
 /// Открывает экран «О приложении» (US-E6-04).
 typedef HomeOpenAbout = void Function(BuildContext context);
 
-/// Главный экран (SP-E2-01).
+/// Главный экран (SP-E2-01, SP-E9-01).
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
@@ -83,19 +86,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Сценарии'),
-        actions: [
-          if (widget.onOpenAbout != null)
-            IconButton(
-              icon: const Icon(Icons.info_outline),
-              tooltip: 'О приложении',
-              onPressed: () {
-                widget.onOpenAbout!(context);
-              },
-            ),
-        ],
-      ),
+      backgroundColor: AppColors.bgCream,
       body: FutureBuilder<HomeFeed?>(
         future: _future,
         builder: (context, snapshot) {
@@ -106,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           if (feed == null) {
             // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
             if (widget.isOffline) {
-              return const Center(child: Text('Нет сети. Проверьте подключение.'));
+              return _messageScreen('Нет сети. Проверьте подключение.');
             }
             return const Center(child: CircularProgressIndicator());
           }
@@ -114,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             feed: feed,
             onOpenScenario: widget.onOpenScenario,
             onOpenGroup: widget.onOpenGroup,
+            onOpenAbout: widget.onOpenAbout,
           );
         },
       ),
@@ -121,15 +113,79 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Widget _errorState(Object error) {
+    return _messageScreen(
+      'Не удалось загрузить витрину',
+      action: FilledButton(
+        onPressed: _reload,
+        child: const Text('Повторить'),
+      ),
+      details: '$error',
+    );
+  }
+
+  Widget _messageScreen(String message, {Widget? action, String? details}) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Не удалось загрузить витрину: $error'),
-          const SizedBox(height: 12),
-          FilledButton(onPressed: _reload, child: const Text('Повторить')),
+          Text(message, textAlign: TextAlign.center),
+          if (details != null) ...[
+            const SizedBox(height: 8),
+            Text(details, textAlign: TextAlign.center),
+          ],
+          if (action != null) ...[const SizedBox(height: 12), action],
         ],
       ),
+    );
+  }
+}
+
+/// Шапка-брендблок: тонкая верхняя полоса, фиолетовая подложка, логотип,
+/// заголовок и подзаголовок (docs/figma/screens/home.md).
+class _BrandHeader extends StatelessWidget {
+  const _BrandHeader({this.onOpenAbout});
+
+  final HomeOpenAbout? onOpenAbout;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(height: 6, color: AppColors.headerPlum),
+        Container(
+          color: AppColors.headerPurple,
+          padding: const EdgeInsets.fromLTRB(24, 20, 16, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  const Expanded(child: Text('Scenario', style: AppTypography.logo)),
+                  if (onOpenAbout != null)
+                    IconButton(
+                      icon: const Icon(
+                        Icons.info_outline,
+                        color: AppColors.textMutedOnDark,
+                      ),
+                      tooltip: 'О приложении',
+                      onPressed: () => onOpenAbout!(context),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const Text('Что сегодня?', style: AppTypography.displayOnDark),
+              const SizedBox(height: 4),
+              const Text(
+                'Выберите сценарий — получите игру',
+                style: AppTypography.subtitleOnDark,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -139,105 +195,132 @@ class _HomeContent extends StatelessWidget {
     required this.feed,
     required this.onOpenScenario,
     this.onOpenGroup,
+    this.onOpenAbout,
   });
 
   final HomeFeed feed;
   final HomeOpenScenario onOpenScenario;
   final HomeOpenGroup? onOpenGroup;
+  final HomeOpenAbout? onOpenAbout;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final activeGroups = feed.groups.where((g) => !g.isPastArchive).toList();
     final pastGroups = feed.groups.where((g) => g.isPastArchive).toList();
     if (feed.vitrine.isEmpty && feed.groups.isEmpty) {
-      return const Center(child: Text('Пока нет сценариев'));
+      return _scrollable([
+        const _BrandHeader(),
+        const Padding(
+          padding: EdgeInsets.all(32),
+          child: Center(child: Text('Пока нет сценариев')),
+        ),
+      ]);
     }
-    return ListView(
-      children: [
-        // Витрина (AC-01).
-        if (feed.vitrine.isNotEmpty)
-          ListTile(
-            title: Text('Витрина', style: textTheme.titleLarge),
-            subtitle: Text('Редакторский выбор'),
+    return _scrollable([
+      _BrandHeader(onOpenAbout: onOpenAbout),
+      // Витрина (AC-01) — «Редакторский выбор» (константа UI, SP-E9-01).
+      if (feed.vitrine.isNotEmpty) ...[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Витрина',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textOnLight,
+                  ),
+                ),
+              ),
+              const CapsHeader('Редакторский выбор', color: AppColors.terracotta),
+            ],
           ),
-        for (final card in feed.vitrine)
-          _ScenarioCardTile(
-            card: card,
-            onOpenScenario: onOpenScenario,
+        ),
+        SizedBox(
+          height: 356,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            itemCount: feed.vitrine.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 16),
+            itemBuilder: (context, index) {
+              final card = feed.vitrine[index];
+              return ScenarioPhotoCard.large(
+                title: card.title,
+                imageRef: card.imageRef,
+                onTap: () => onOpenScenario(context, card.scenarioId),
+              );
+            },
           ),
-        // Активные группы смысла (US-E7-01, БТ §7.1).
-        if (activeGroups.isNotEmpty)
-          ListTile(
-            title: Text('Подборки', style: textTheme.titleLarge),
-          ),
-        for (final group in activeGroups)
-          _GroupTile(
-            group: group,
-            onOpenGroup: onOpenGroup,
-          ),
-        // «Сценарии прошлого» (US-E7-02, CR-3).
-        if (pastGroups.isNotEmpty)
-          ListTile(
-            title: Text('Сценарии прошлого', style: textTheme.titleLarge),
-          ),
-        for (final group in pastGroups)
-          _GroupTile(
-            group: group,
-            onOpenGroup: onOpenGroup,
-          ),
+        ),
       ],
+      // Активные группы смысла (US-E7-01, БТ §7.1) — секциями.
+      for (final group in activeGroups) _GroupSection(
+        group: group,
+        onOpenGroup: onOpenGroup,
+      ),
+      // «Сценарии прошлого» (US-E7-02, CR-3).
+      if (pastGroups.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 32, 24, 12),
+          child: const Text(
+            'Сценарии прошлого',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textOnLight,
+            ),
+          ),
+        ),
+      for (final group in pastGroups)
+        _GroupSection(group: group, onOpenGroup: onOpenGroup),
+      const SizedBox(height: 32),
+    ]);
+  }
+
+  Widget _scrollable(List<Widget> children) {
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: children,
     );
   }
 }
 
-/// Карточка группы смысла на главном экране (US-E7-01).
-class _GroupTile extends StatelessWidget {
-  const _GroupTile({required this.group, required this.onOpenGroup});
+/// Секция группы смысла: заголовок + компактная карточка группы,
+/// открывающая экран группы (состав группы — на экране группы, без N+1).
+class _GroupSection extends StatelessWidget {
+  const _GroupSection({required this.group, required this.onOpenGroup});
 
   final GroupRef group;
   final HomeOpenGroup? onOpenGroup;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(group.title),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        onOpenGroup?.call(context, group.semanticGroupId, group.isPastArchive);
-      },
-    );
-  }
-}
-
-/// Карточка сценария на главном экране (AC-02).
-class _ScenarioCardTile extends StatelessWidget {
-  const _ScenarioCardTile({required this.card, required this.onOpenScenario});
-
-  final ScenarioCard card;
-  final HomeOpenScenario onOpenScenario;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(card.title),
-      subtitle: card.subtitle == null ? null : Text(card.subtitle!),
-      leading: card.imageRef == null
-          ? null
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: SizedBox(
-                width: 48,
-                height: 48,
-                child: Image.network(
-                  supabasePublicUrl(card.imageRef!),
-                  fit: BoxFit.cover,
-                ),
-              ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            group.title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textOnLight,
             ),
-      onTap: () {
-        onOpenScenario(context, card.scenarioId);
-      },
+          ),
+          const SizedBox(height: 12),
+          ScenarioPhotoCard.compact(
+            key: ValueKey('home_group_${group.semanticGroupId}'),
+            title: group.title,
+            onTap: () =>
+                onOpenGroup?.call(context, group.semanticGroupId, group.isPastArchive),
+          ),
+        ],
+      ),
     );
   }
 }

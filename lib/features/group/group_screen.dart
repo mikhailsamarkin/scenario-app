@@ -1,19 +1,21 @@
-// Экран группы смысла (SP-E7-01, БТ §7.1).
+// Экран группы смысла (SP-E7-01, редизайн SP-E9-01): сетка компактных
+// фото-карточек сценариев группы на кремовом фоне.
 //
 // Читает `semantic_groups_public/{id}` через `AggregateRepository` (A-11,
-// A-38). Показывает сценарии группы; переход на сценарий — через
-// инжектируемый колбэк `onOpenScenario` для тестируемости.
+// A-38). Переход на сценарий — через инжектируемый колбэк `onOpenScenario`
+// (с hero-фото карточки для экрана сценария).
 
 import 'package:flutter/material.dart';
 
 import '../../data/contract/models.dart';
 import '../../data/firestore/aggregate_repository_interface.dart';
-import '../../supabase_config.dart';
+import '../../design/app_colors.dart';
+import '../../design/widgets.dart';
 
 /// Открывает экран сценария (US-E2-02).
 typedef GroupOpenScenario = void Function(BuildContext context, String scenarioId);
 
-/// Экран группы смысла (SP-E7-01).
+/// Экран группы смысла (SP-E7-01, SP-E9-01).
 class GroupScreen extends StatefulWidget {
   const GroupScreen({
     super.key,
@@ -57,6 +59,7 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.bgCream,
       appBar: AppBar(title: const Text('Подборка')),
       body: FutureBuilder<SemanticGroupPublic?>(
         future: _future,
@@ -102,34 +105,36 @@ class _GroupContent extends StatelessWidget {
     if (group.scenarios.isEmpty) {
       return const Center(child: Text('Пока нет сценариев'));
     }
-    return Scaffold(
-      appBar: AppBar(title: Text(group.title)),
-      body: ListView.builder(
-        itemCount: group.scenarios.length,
-        itemBuilder: (context, index) {
-          final card = group.scenarios[index];
-          return ListTile(
-            title: Text(card.title),
-            subtitle: card.subtitle == null ? null : Text(card.subtitle!),
-            leading: card.imageRef == null
-                ? null
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(
-                      width: 48,
-                      height: 48,
-                      child: Image.network(
-                        supabasePublicUrl(card.imageRef!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-            onTap: () {
-              onOpenScenario(context, card.scenarioId);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 4),
+          child: CapsHeader(group.title),
+        ),
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.all(24),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 176 / 256,
+            ),
+            itemCount: group.scenarios.length,
+            itemBuilder: (context, index) {
+              final card = group.scenarios[index];
+              return Center(
+                child: ScenarioPhotoCard.compact(
+                  title: card.title,
+                  imageRef: card.imageRef,
+                  onTap: () => onOpenScenario(context, card.scenarioId),
+                ),
+              );
             },
-          );
-        },
-      ),
+          ),
+        ),
+      ],
     );
   }
 }

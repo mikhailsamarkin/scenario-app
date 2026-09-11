@@ -6,6 +6,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:scenario/analytics/analytics_service.dart';
@@ -150,20 +151,25 @@ void main() {
   });
 
   testWidgets('AC-02: переход Home → Scenario → Game', (tester) async {
+    // Высокая поверхность: карточки по макету ниже первого экрана.
+    tester.view.physicalSize = const Size(800, 2000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     final repo = _FakeRepository();
     repo.setFeed(_feed());
     await tester.pumpWidget(_app(repo, onboarding: true));
     await tester.pumpAndSettle();
 
-    // Тап по сценарию → экран сценария (уникальный текст whyTheseGames).
+    // Тап по сценарию → экран сценария (уникальный текст whyTheseGames,
+    // капс-заголовок по макету SP-E9-01).
     await tester.tap(find.text('Сценарий'));
     await tester.pumpAndSettle();
-    expect(find.text('Почему эти игры'), findsOneWidget);
+    expect(find.text('ПОЧЕМУ ЭТИ ИГРЫ ПОДХОДЯТ'), findsOneWidget);
 
-    // Тап по игре → экран игры (уникальный заголовок).
+    // Тап по игре → экран игры.
     await tester.tap(find.text('Игра'));
     await tester.pumpAndSettle();
-    expect(find.text('Игра'), findsWidgets);
+    expect(find.text('Назад'), findsOneWidget);
   });
 
   testWidgets('онбординг при первом запуске', (tester) async {
@@ -171,6 +177,6 @@ void main() {
     await tester.pumpWidget(_app(repo, onboarding: false));
     await tester.pump();
 
-    expect(find.text('Добро пожаловать'), findsOneWidget);
+    expect(find.text('Выбери ситуацию — получи игру'), findsOneWidget);
   });
 }

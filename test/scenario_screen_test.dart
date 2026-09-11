@@ -1,4 +1,4 @@
-// Widget-тесты экрана сценария (SP-E2-02).
+// Widget-тесты экрана сценария (SP-E2-02, редизайн SP-E9-01).
 //
 // Покрывают AC-01 (обоснование выше списка игр; порядок из данных) и
 // AC-02 (переносы строк в whyTheseGames сохраняются). Чтение — через
@@ -80,7 +80,14 @@ void main() {
 
     // Заголовок и обоснование присутствуют.
     expect(find.text('Вечеринка'), findsOneWidget);
-    expect(find.text('Почему эти игры подходят'), findsOneWidget);
+    expect(find.text('ПОЧЕМУ ЭТИ ИГРЫ ПОДХОДЯТ'), findsOneWidget);
+
+    // Список игр ниже hero — прокрутить к нему.
+    await tester.scrollUntilVisible(
+      find.text('Dixit'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
 
     // Обе игры в списке, в порядке из данных.
     expect(find.text('Dixit'), findsOneWidget);
@@ -104,6 +111,14 @@ void main() {
 
     // Текст с \n отображается целиком (переносы сохраняются визуально).
     expect(find.text('Первая строка\nВторая строка'), findsOneWidget);
+    // Счётчик подборки в капс-заголовке (склонение, SP-E9-01); секция игр
+    // ниже hero — прокрутить к ней.
+    await tester.scrollUntilVisible(
+      find.text('В ПОДБОРКЕ · 2 ИГРЫ'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('В ПОДБОРКЕ · 2 ИГРЫ'), findsOneWidget);
   });
 
   testWidgets('AC-02: офлайн без кэша — состояние «нет сети»', (tester) async {

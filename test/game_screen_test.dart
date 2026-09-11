@@ -1,4 +1,4 @@
-// Widget-тесты экрана игры (SP-E2-03).
+// Widget-тесты экрана игры (SP-E2-03, редизайн SP-E9-01).
 //
 // Покрывают AC-01 (карусель с валидными слайдами и alt), AC-02 (четыре
 // характеристики из контракта), AC-03 (краткое описание в контексте
@@ -111,10 +111,10 @@ void main() {
     )));
     await tester.pump();
 
-    expect(find.text('2–4 игрок'), findsOneWidget);
-    expect(find.text('На вечер'), findsOneWidget);
+    expect(find.text('2–4'), findsOneWidget);
+    expect(find.text('Партия на вечер'), findsOneWidget);
     expect(find.text('Семейные'), findsOneWidget);
-    expect(find.text('Простые правила'), findsOneWidget);
+    expect(find.text('Быстро объяснить'), findsOneWidget);
   });
 
   testWidgets('AC-03: краткое описание в контексте открытого сценария',
@@ -128,6 +128,12 @@ void main() {
     )));
     await tester.pump();
 
+    // Описание ниже hero и сетки характеристик — прокрутить к нему.
+    await tester.scrollUntilVisible(
+      find.text('Описание в контексте вечеринки'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Описание в контексте вечеринки'), findsOneWidget);
   });
 

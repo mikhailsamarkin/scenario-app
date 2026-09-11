@@ -16,6 +16,7 @@ import 'analytics/analytics_events.dart';
 import 'analytics/analytics_service.dart';
 import 'analytics/block_view_tracker.dart';
 import 'data/firestore/aggregate_repository_interface.dart';
+import 'design/app_theme.dart';
 import 'features/about/about_screen.dart';
 import 'features/about/url_launcher.dart';
 import 'features/game/game_screen.dart';
@@ -159,6 +160,7 @@ class _ScenarioAppState extends State<ScenarioApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: AppTheme.light(),
       home: FutureBuilder<bool>(
         future: _forceUpdateFuture,
         builder: (context, snapshot) {
