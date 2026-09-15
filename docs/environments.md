@@ -117,8 +117,8 @@ firebase deploy --only firestore:rules --project scenario-prod-491c    # prod
 - Миграция `scenario/supabase/migrations/20260915044323_keepalive.sql` создаёт
   таблицу `public.keepalive` (RLS + SELECT для `anon`).
 - GitHub Actions `scenario-site/.github/workflows/supabase-keepalive.yml`
-  ежедневно выполняет `GET /rest/v1/keepalive?select=id&limit=1` для dev и prod
-  (`scripts/supabase-keepalive.mjs`).
+  каждые 6 часов выполняет `GET /rest/v1/keepalive?select=id&limit=1` для dev и
+  prod (`scripts/supabase-keepalive.mjs`).
 
 ## 6. Ежедневный push (A-7)
 

@@ -4,7 +4,7 @@
 -- activity. Активностью считается запрос к БД через PostgREST (exposed-схема
 -- public), а запросы к Storage/Auth/Management API — нет. Поэтому заводим
 -- лёгкую таблицу, к которой GitHub Actions (supabase-keepalive.yml в
--- репозитории scenario-site) ежедневно обращается:
+-- репозитории scenario-site) обращается каждые 6 часов:
 --   GET /rest/v1/keepalive?select=id&limit=1   (anon key)
 --
 -- Применяется к обоим проектам: bzraqbhydmklvpfqiidl (dev), sjxmmqnejolgtwcfjzsd (prod).
