@@ -13,13 +13,13 @@ import 'supabase_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  print('startup: binding ok');
+  debugPrint('startup: binding ok');
 
   // Инициализация Firebase с options текущего окружения (dev/prod).
   await Firebase.initializeApp(
     options: AppConfig.firebaseOptions,
   );
-  print('startup: firebase ok');
+  debugPrint('startup: firebase ok');
 
   // Отчёты о сбоях (US-E6-05, A-41): сбор включён для dev и prod.
   // Обёрнуто в try/catch: если нативный компонент Crashlytics недоступен
@@ -41,18 +41,18 @@ void main() async {
       return true;
     };
   }
-  print('startup: crashlytics ok');
+  debugPrint('startup: crashlytics ok');
 
   // Включение Firestore persistence для офлайн-чтения кэша (A-20).
   enableFirestorePersistence();
-  print('startup: persistence ok');
+  debugPrint('startup: persistence ok');
 
   // Инициализация Supabase (медиа) для текущего окружения.
   await initSupabase();
-  print('startup: supabase ok');
+  debugPrint('startup: supabase ok');
 
   runApp(ScenarioApp(
     repository: FirestoreAggregateRepository(FirebaseFirestore.instance),
   ));
-  print('startup: runApp scheduled');
+  debugPrint('startup: runApp scheduled');
 }
