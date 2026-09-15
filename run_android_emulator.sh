@@ -6,6 +6,7 @@
 #   ./run_android_emulator.sh                # dev (по умолчанию)
 #   ./run_android_emulator.sh prod           # prod
 #   ./run_android_emulator.sh dev --build    # сначала собрать dev
+#   ./run_android_emulator.sh dev --build --debug   # debug-сборка (логи/исключения)
 #   ./run_android_emulator.sh --device SERIAL
 #   ./run_android_emulator.sh --help
 #
@@ -15,10 +16,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ENV="${1:-dev}"
 BUILD=0
+DEBUG=0
 DEVICE=""
 
 usage() {
-  sed -n '2,10p' "$0"
+  sed -n '2,11p' "$0"
   exit 0
 }
 
@@ -26,6 +28,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     dev|prod) ENV="$1"; shift ;;
     --build) BUILD=1; shift ;;
+    --debug) DEBUG=1; shift ;;
     --device) DEVICE="$2"; shift 2 ;;
     -h|--help) usage ;;
     *) echo "Неизвестный аргумент: $1" >&2; usage ;;
@@ -34,12 +37,20 @@ done
 
 case "$ENV" in
   dev)
-    APK_PATH="${APK_PATH:-$SCRIPT_DIR/build/app/outputs/apk/dev/release/app-dev-release.apk}"
+    if [[ "$DEBUG" == "1" ]]; then
+      APK_PATH="${APK_PATH:-$SCRIPT_DIR/build/app/outputs/apk/dev/debug/app-dev-debug.apk}"
+    else
+      APK_PATH="${APK_PATH:-$SCRIPT_DIR/build/app/outputs/apk/dev/release/app-dev-release.apk}"
+    fi
     BUNDLE_ID="com.scenario.scenario.dev"
     FLAVOR="dev"
     ;;
   prod)
-    APK_PATH="${APK_PATH:-$SCRIPT_DIR/build/app/outputs/apk/prod/release/app-prod-release.apk}"
+    if [[ "$DEBUG" == "1" ]]; then
+      APK_PATH="${APK_PATH:-$SCRIPT_DIR/build/app/outputs/apk/prod/debug/app-prod-debug.apk}"
+    else
+      APK_PATH="${APK_PATH:-$SCRIPT_DIR/build/app/outputs/apk/prod/release/app-prod-release.apk}"
+    fi
     BUNDLE_ID="com.scenario.scenario"
     FLAVOR="prod"
     ;;
@@ -76,8 +87,10 @@ fi
 if [[ "$BUILD" == "1" ]]; then
   # Передаём APP_ENV и anon-ключ Supabase, чтобы flavor и рантайм-конфиг совпадали.
   SUPABASE_KEY="$(cat "${SCRIPT_DIR}/key/sb_anon_${FLAVOR}.txt" 2>/dev/null || true)"
-  echo "==> flutter build apk --flavor $FLAVOR --release --dart-define=APP_ENV=$FLAVOR"
-  (cd "$SCRIPT_DIR" && flutter build apk --flavor "$FLAVOR" --release \
+  BUILD_MODE="release"
+  [[ "$DEBUG" == "1" ]] && BUILD_MODE="debug"
+  echo "==> flutter build apk --flavor $FLAVOR --$BUILD_MODE --dart-define=APP_ENV=$FLAVOR"
+  (cd "$SCRIPT_DIR" && flutter build apk --flavor "$FLAVOR" --"$BUILD_MODE" \
     --dart-define=APP_ENV="$FLAVOR" \
     --dart-define=SUPABASE_ANON_KEY_$(echo "$FLAVOR" | tr '[:lower:]' '[:upper:]')="$SUPABASE_KEY")
 fi
@@ -206,3 +219,10 @@ echo "==> Запускаю $ACTIVITY"
 "$ADB" -s "$DEVICE" shell am start -n "$ACTIVITY"
 
 echo "Готово. Приложение запущено на устройстве $DEVICE."
+
+# 7. В debug-режиме — стримить логи (Dart print/исключения) в реальном времени.
+# Прервать — Ctrl+C. Для фильтрации: | grep -iE "flutter|dart|exception|error|supabase|firebase"
+if [[ "$DEBUG" == "1" ]]; then
+  echo "==> Debug: стримлю логи (Ctrl+C для выхода)"
+  "$ADB" -s "$DEVICE" shell log stream
+fi

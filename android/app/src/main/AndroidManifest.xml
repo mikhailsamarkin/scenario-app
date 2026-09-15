@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for Firebase/Supabase network access in release builds.
+         (Debug/profile добавляют его в src/debug|profile, но release их не
+         включает — поэтому INTERNET объявлен здесь, в main.) -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="scenario"
         android:name="${applicationName}"
