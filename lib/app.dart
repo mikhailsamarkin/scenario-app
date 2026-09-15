@@ -28,6 +28,7 @@ import 'features/onboarding/onboarding_screen.dart';
 import 'features/onboarding/push_subscription_service.dart';
 import 'features/push/push_deep_link_service.dart';
 import 'features/scenario/scenario_screen.dart';
+import 'features/share/share_analytics_service.dart';
 import 'features/share/share_scenario_service.dart';
 import 'force_update/force_update_checker.dart';
 import 'force_update/update_screen.dart';
@@ -151,6 +152,7 @@ class _ScenarioAppState extends State<ScenarioApp> {
         builder: (_) => _ScenarioRoute(
           scenarioId: scenarioId,
           repository: widget.repository,
+          analytics: _analytics,
           blockViewTracker: _blockViewTracker,
         ),
       ),
@@ -271,6 +273,7 @@ class _HomeRoute extends StatelessWidget {
             builder: (_) => _ScenarioRoute(
               scenarioId: scenarioId,
               repository: repository,
+              analytics: analytics,
               blockViewTracker: blockViewTracker,
             ),
           ),
@@ -283,6 +286,7 @@ class _HomeRoute extends StatelessWidget {
             builder: (_) => _GroupRoute(
               groupId: groupId,
               repository: repository,
+              analytics: analytics,
               blockViewTracker: blockViewTracker,
               source: isPastArchive ? ScenarioOpenSource.past : ScenarioOpenSource.group,
             ),
@@ -298,12 +302,14 @@ class _GroupRoute extends StatelessWidget {
   const _GroupRoute({
     required this.groupId,
     required this.repository,
+    required this.analytics,
     required this.blockViewTracker,
     required this.source,
   });
 
   final String groupId;
   final AggregateRepository repository;
+  final AnalyticsService analytics;
   final BlockViewTracker blockViewTracker;
   final ScenarioOpenSource source;
 
@@ -313,12 +319,16 @@ class _GroupRoute extends StatelessWidget {
       groupId: groupId,
       repository: repository,
       onOpenScenario: (context, scenarioId) {
+        // Открытие сценария из группы/«Сценариев прошлого» с источником
+        // (US-E6-02, AC-02).
+        analytics.logScenarioOpen(scenarioId, source);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => _ScenarioRoute(
               scenarioId: scenarioId,
               repository: repository,
+              analytics: analytics,
               blockViewTracker: blockViewTracker,
             ),
           ),
@@ -345,16 +355,22 @@ class _ScenarioRoute extends StatelessWidget {
   const _ScenarioRoute({
     required this.scenarioId,
     required this.repository,
+    required this.analytics,
     required this.blockViewTracker,
   });
 
   final String scenarioId;
   final AggregateRepository repository;
+  final AnalyticsService analytics;
   final BlockViewTracker blockViewTracker;
 
   @override
   Widget build(BuildContext context) {
-    final shareService = ShareScenarioService(SharePlusLauncher());
+    // Аналитика воронки шаринга подключается к боевому сервису (US-E5-04).
+    final shareService = ShareScenarioService(
+      SharePlusLauncher(),
+      analytics: ShareAnalyticsService(analytics),
+    );
     return ScenarioScreen(
       scenarioId: scenarioId,
       repository: repository,
@@ -363,6 +379,8 @@ class _ScenarioRoute extends StatelessWidget {
         shareService.shareScenario(scenario);
       },
       onOpenGame: (context, gameId, scenarioId) {
+        // Открытие игры (US-E6-01).
+        analytics.logGameOpen(gameId);
         Navigator.push(
           context,
           MaterialPageRoute(

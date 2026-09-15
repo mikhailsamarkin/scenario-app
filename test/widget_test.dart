@@ -126,13 +126,14 @@ class _NoForceUpdateSource implements RemoteConfigSource {
   Future<RemoteConfigValues> fetch() async => RemoteConfigValues(0, 0);
 }
 
-ScenarioApp _app(AggregateRepository repo, {required bool onboarding}) {
+ScenarioApp _app(AggregateRepository repo,
+    {required bool onboarding, _FakeAnalyticsLogger? logger}) {
   return ScenarioApp(
     repository: repo,
     deepLinkSource: _NoDeepLinkSource(),
     linkSource: _NoLinkSource(),
     onboardingStatusSource: _OnboardingStatus(onboarding),
-    analyticsLogger: _FakeAnalyticsLogger(),
+    analyticsLogger: logger ?? _FakeAnalyticsLogger(),
     remoteConfigSource: _NoForceUpdateSource(),
   );
 }
@@ -157,7 +158,8 @@ void main() {
     addTearDown(tester.view.reset);
     final repo = _FakeRepository();
     repo.setFeed(_feed());
-    await tester.pumpWidget(_app(repo, onboarding: true));
+    final logger = _FakeAnalyticsLogger();
+    await tester.pumpWidget(_app(repo, onboarding: true, logger: logger));
     await tester.pumpAndSettle();
 
     // Тап по сценарию → экран сценария (уникальный текст whyTheseGames,
@@ -165,11 +167,25 @@ void main() {
     await tester.tap(find.text('Сценарий'));
     await tester.pumpAndSettle();
     expect(find.text('ПОЧЕМУ ЭТИ ИГРЫ ПОДХОДЯТ'), findsOneWidget);
+    // Открытие сценария с источником home (US-E6-02).
+    expect(
+      logger.events.any((e) =>
+          e.$1 == 'scenario_open' &&
+          e.$2?['scenario_id'] == 's1' &&
+          e.$2?['source'] == 'home'),
+      isTrue,
+    );
 
     // Тап по игре → экран игры.
     await tester.tap(find.text('Игра'));
     await tester.pumpAndSettle();
     expect(find.text('Назад'), findsOneWidget);
+    // Открытие игры (US-E6-01).
+    expect(
+      logger.events.any(
+          (e) => e.$1 == 'game_open' && e.$2?['game_id'] == 'g1'),
+      isTrue,
+    );
   });
 
   testWidgets('онбординг при первом запуске', (tester) async {

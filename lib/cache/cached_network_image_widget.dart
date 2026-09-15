@@ -7,6 +7,22 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+/// Предел числа объектов в дисковом кэше изображений (вариант B, ADR-004–009).
+const int kImageCacheMaxObjects = 200;
+
+/// Общий менеджер дискового кэша изображений (A-21a, NFR-SR-6).
+///
+/// Лимит — по числу объектов (вариант B), а не по байтам. Один менеджер на
+/// приложение: повторное открытие отдаётся из кэша без сетевого запроса.
+final CacheManager scenarioImageCacheManager = CacheManager(
+  Config(
+    'scenario_images',
+    maxNrOfCacheObjects: kImageCacheMaxObjects,
+    stalePeriod: const Duration(days: 30),
+  ),
+);
 
 /// Виджет кэшируемого сетевого изображения.
 ///
@@ -42,6 +58,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: url,
+      cacheManager: scenarioImageCacheManager,
       fit: fit,
       width: width,
       height: height,

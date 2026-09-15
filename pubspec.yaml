@@ -44,6 +44,7 @@ dependencies:
   # Кэш изображений (ADR-004–009): cached_network_image, лимит по числу
   # объектов (вариант B), политика LRU (A-21a, NFR-SR-6).
   cached_network_image: ^4.0.0
+  flutter_cache_manager: ^3.4.2
 
   # Локальные настройки (флаг «онбординг пройден», SP-E3-01).
   shared_preferences: ^2.5.5

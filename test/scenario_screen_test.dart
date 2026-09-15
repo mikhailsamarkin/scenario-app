@@ -147,4 +147,31 @@ void main() {
     expect(find.text('Вечеринка'), findsOneWidget);
     expect(find.text('Нет сети. Проверьте подключение.'), findsNothing);
   });
+
+  testWidgets('US-E5-01: «Поделиться» доступно и без подзаголовка',
+      (tester) async {
+    final noSubtitle = ScenarioPublic(
+      id: 's2',
+      slug: 'semya',
+      title: 'Семейный вечер',
+      whyTheseGames: 'Почему',
+      seoTitle: 'Семейный вечер',
+      games: const [],
+      contentVersion: 1,
+      updatedAt: DateTime.utc(2026, 9, 7),
+    );
+    var shared = false;
+    await tester.pumpWidget(_wrap(ScenarioScreen(
+      scenarioId: 's2',
+      repository: _FakeRepository(noSubtitle),
+      onOpenGame: (context, gameId, scenarioId) {},
+      onShare: (_) => shared = true,
+    )));
+    await tester.pump();
+
+    expect(find.text('Поделиться'), findsOneWidget);
+    await tester.tap(find.text('Поделиться'));
+    await tester.pump();
+    expect(shared, isTrue);
+  });
 }

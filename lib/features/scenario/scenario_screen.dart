@@ -72,13 +72,24 @@ class _ScenarioView {
   final String? heroImageRef;
 }
 
-class _ScenarioScreenState extends State<ScenarioScreen> {
+class _ScenarioScreenState extends State<ScenarioScreen>
+    with WidgetsBindingObserver {
   late Future<_ScenarioView?> _future;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _future = _load();
+  }
+
+  /// Фоновое обновление при возврате приложения в активное состояние
+  /// (US-E2-04, A-22).
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _reload();
+    }
   }
 
   Future<_ScenarioView?> _load() async {
@@ -127,6 +138,7 @@ class _ScenarioScreenState extends State<ScenarioScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     // Сессия экрана заканчивается при уходе со страницы (US-E6-03, A-36).
     widget.blockViewTracker?.resetSession();
     super.dispose();
@@ -153,6 +165,16 @@ class _ScenarioScreenState extends State<ScenarioScreen> {
             // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
             if (widget.isOffline) {
               return _messageScreen('Нет сети. Проверьте подключение.');
+            }
+            // Загрузка завершилась без данных — не «висеть» спиннером.
+            if (snapshot.connectionState == ConnectionState.done) {
+              return _messageScreen(
+                'Не удалось загрузить сценарий',
+                action: FilledButton(
+                  onPressed: _reload,
+                  child: const Text('Повторить'),
+                ),
+              );
             }
             return const Center(child: CircularProgressIndicator());
           }
@@ -224,17 +246,21 @@ class _ScenarioContent extends StatelessWidget {
           onBack: () => Navigator.of(context).maybePop(),
         ),
         // Интро: подзаголовок курсивом + «Поделиться» (US-E5-01).
-        if (scenario.subtitle != null)
+        // Кнопка шаринга доступна для любого сценария, даже без подзаголовка.
+        if (scenario.subtitle != null || onShare != null)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(scenario.subtitle!, style: AppTypography.scenarioIntro),
-                ),
+                if (scenario.subtitle != null)
+                  Expanded(
+                    child: Text(scenario.subtitle!, style: AppTypography.scenarioIntro),
+                  )
+                else
+                  const Spacer(),
                 if (onShare != null) ...[
-                  const SizedBox(width: 12),
+                  if (scenario.subtitle != null) const SizedBox(width: 12),
                   PillButton(
                     onPressed: () => onShare!(scenario),
                     child: const Row(

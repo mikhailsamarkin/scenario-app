@@ -99,6 +99,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             if (widget.isOffline) {
               return _messageScreen('Нет сети. Проверьте подключение.');
             }
+            // Загрузка завершилась без данных — не «висеть» спиннером.
+            if (snapshot.connectionState == ConnectionState.done) {
+              return _messageScreen(
+                'Не удалось загрузить витрину',
+                action: FilledButton(
+                  onPressed: _reload,
+                  child: const Text('Повторить'),
+                ),
+              );
+            }
             return const Center(child: CircularProgressIndicator());
           }
           return _HomeContent(

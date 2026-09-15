@@ -75,17 +75,28 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   late Future<GamePublic?> _future;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _future = widget.repository.getGame(widget.gameId);
+  }
+
+  /// Фоновое обновление при возврате приложения в активное состояние
+  /// (US-E2-04, A-22).
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _reload();
+    }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     // Сессия экрана заканчивается при уходе со страницы (US-E6-03, A-36).
     widget.blockViewTracker?.resetSession();
     super.dispose();
@@ -112,6 +123,16 @@ class _GameScreenState extends State<GameScreen> {
             // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
             if (widget.isOffline) {
               return _messageScreen('Нет сети. Проверьте подключение.');
+            }
+            // Загрузка завершилась без данных — не «висеть» спиннером.
+            if (snapshot.connectionState == ConnectionState.done) {
+              return _messageScreen(
+                'Не удалось загрузить игру',
+                action: FilledButton(
+                  onPressed: _reload,
+                  child: const Text('Повторить'),
+                ),
+              );
             }
             return const Center(child: CircularProgressIndicator());
           }

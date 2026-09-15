@@ -41,13 +41,29 @@ class GroupScreen extends StatefulWidget {
   State<GroupScreen> createState() => _GroupScreenState();
 }
 
-class _GroupScreenState extends State<GroupScreen> {
+class _GroupScreenState extends State<GroupScreen> with WidgetsBindingObserver {
   late Future<SemanticGroupPublic?> _future;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _future = widget.repository.getSemanticGroup(widget.groupId);
+  }
+
+  /// Фоновое обновление при возврате приложения в активное состояние
+  /// (US-E2-04, A-22).
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _reload();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   void _reload() {
@@ -71,6 +87,21 @@ class _GroupScreenState extends State<GroupScreen> {
           if (group == null) {
             if (widget.isOffline) {
               return const Center(child: Text('Нет сети. Проверьте подключение.'));
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Не удалось загрузить подборку'),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: _reload,
+                      child: const Text('Повторить'),
+                    ),
+                  ],
+                ),
+              );
             }
             return const Center(child: CircularProgressIndicator());
           }
