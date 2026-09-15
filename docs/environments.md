@@ -109,6 +109,17 @@ firebase deploy --only firestore:rules --project scenario-prod-491c    # prod
 | service_role dev / prod | `key/sb_sr_dev.txt`, `key/sb_sr_prod.txt` (вне git) |
 | PAT (Management API) | `key/supabase-token` |
 
+### Keep-alive (free tier)
+
+- Free-проекты Supabase уходят в авто-паузу после 7 дней без user database
+  activity. Активностью считается запрос к БД через PostgREST (exposed-схема
+  `public`); запросы к Storage/Auth/Management API **не** засчитываются.
+- Миграция `scenario/supabase/migrations/20260915044323_keepalive.sql` создаёт
+  таблицу `public.keepalive` (RLS + SELECT для `anon`).
+- GitHub Actions `scenario-site/.github/workflows/supabase-keepalive.yml`
+  ежедневно выполняет `GET /rest/v1/keepalive?select=id&limit=1` для dev и prod
+  (`scripts/supabase-keepalive.mjs`).
+
 ## 6. Ежедневный push (A-7)
 
 - **Вариант C (без Cloud Functions):** GitHub Actions cron `scenario-site/.github/workflows/daily-push.yml` → `scripts/daily-push.mjs` (firebase-admin → Firestore + FCM).
