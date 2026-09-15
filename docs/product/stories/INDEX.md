@@ -99,6 +99,20 @@
 |----|--------|------|
 | US-E9-01 | UI-редизайн экранов по Figma-макетам | [e9-ui-redesign.md](e9-ui-redesign.md) |
 
+## E10. Сайт: контентные страницы из Firebase/Supabase по env
+
+| ID | Сторя | Файл |
+|----|--------|------|
+| US-E10-01 | Главная страница: витрина, группы, карусель | [e10-site-home-page.md](e10-site-home-page.md) |
+| US-E10-02 | Страница списка сценариев | [e10-site-scenarios-list.md](e10-site-scenarios-list.md) |
+| US-E10-03 | Страница списка игр | [e10-site-games-list.md](e10-site-games-list.md) |
+
+## E11. Стабильность Android-сборки: Crashlytics в release
+
+| ID | Сторя | Файл |
+|----|--------|------|
+| US-E11-01 | Crashlytics в release: апгрейд google-services и подключение Gradle-плагина | [e11-crashlytics-release-gradle.md](e11-crashlytics-release-gradle.md) |
+
 ## Спецификации реализации
 
 | ID | Спека | Сторя |
@@ -147,4 +161,4 @@
 
 ---
 
-**Всего:** 42 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
+**Всего:** 46 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
