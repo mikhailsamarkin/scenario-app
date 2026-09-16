@@ -117,6 +117,38 @@ class HeroBlock extends StatelessWidget {
   }
 }
 
+/// Кнопка «назад», закреплённая у верхнего левого края экрана: остаётся
+/// доступной при скролле (US-E2-02). Полупрозрачная тёмная подложка — чтобы
+/// белая стрелка читалась и поверх фото, и поверх светлого контента.
+///
+/// Размещается в `Stack` поверх контента экрана:
+/// `Positioned(top: 0, left: 0, child: PinnedBackButton(onBack: ...))`.
+class PinnedBackButton extends StatelessWidget {
+  const PinnedBackButton({super.key, required this.onBack});
+
+  /// Колбэк «назад»; null — кнопка не показывается.
+  final VoidCallback? onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    if (onBack == null) return const SizedBox.shrink();
+    return SafeArea(
+      bottom: false,
+      right: false,
+      minimum: const EdgeInsets.only(top: 12, left: 8),
+      child: Material(
+        color: Colors.black45,
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: onBack,
+        ),
+      ),
+    );
+  }
+}
+
 /// Капс-заголовок секции («В ПОДБОРКЕ · 3 ИГРЫ», «КРАТКО»).
 class CapsHeader extends StatelessWidget {
   const CapsHeader(this.text, {super.key, this.color = AppColors.textOnLight});

@@ -112,38 +112,56 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgCream,
-      body: FutureBuilder<GamePublic?>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return _errorState(snapshot.error!);
-          }
-          final game = snapshot.data;
-          if (game == null) {
-            // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
-            if (widget.isOffline) {
-              return _messageScreen('Нет сети. Проверьте подключение.');
-            }
-            // Загрузка завершилась без данных — не «висеть» спиннером.
-            if (snapshot.connectionState == ConnectionState.done) {
-              return _messageScreen(
-                'Не удалось загрузить игру',
-                action: FilledButton(
-                  onPressed: _reload,
-                  child: const Text('Повторить'),
-                ),
-              );
-            }
-            return const Center(child: CircularProgressIndicator());
-          }
-          return _GameContent(
-            game: game,
-            scenarioId: widget.scenarioId,
-            slideImageBuilder: widget.slideImageBuilder,
-            blockViewTracker: widget.blockViewTracker,
-          );
-        },
+      body: Stack(
+        children: [
+          // Кнопка «назад» закреплена поверх контента и не уезжает при
+          // скролле (US-E2-02).
+          _content(),
+          Positioned(
+            top: 0,
+            left: 0,
+            child: PinnedBackButton(
+              onBack: () => Navigator.of(context).maybePop(),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  /// Контент экрана: состояние загрузки/ошибки/данных.
+  Widget _content() {
+    return FutureBuilder<GamePublic?>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return _errorState(snapshot.error!);
+        }
+        final game = snapshot.data;
+        if (game == null) {
+          // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
+          if (widget.isOffline) {
+            return _messageScreen('Нет сети. Проверьте подключение.');
+          }
+          // Загрузка завершилась без данных — не «висеть» спиннером.
+          if (snapshot.connectionState == ConnectionState.done) {
+            return _messageScreen(
+              'Не удалось загрузить игру',
+              action: FilledButton(
+                onPressed: _reload,
+                child: const Text('Повторить'),
+              ),
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        }
+        return _GameContent(
+          game: game,
+          scenarioId: widget.scenarioId,
+          slideImageBuilder: widget.slideImageBuilder,
+          blockViewTracker: widget.blockViewTracker,
+        );
+      },
     );
   }
 
@@ -208,7 +226,6 @@ class _GameContent extends StatelessWidget {
           child: _HeroCarousel(
             slides: game.carousel,
             imageBuilder: slideImageBuilder,
-            onBack: () => Navigator.of(context).maybePop(),
           ),
         ),
         Padding(
@@ -307,18 +324,16 @@ class _GameContent extends StatelessWidget {
   }
 }
 
-/// Hero-карусель: фото во всю ширину, стрелка «назад», бейдж caption,
-/// точки-индикаторы.
+/// Hero-карусель: фото во всю ширину, бейдж caption, точки-индикаторы.
+/// Кнопка «назад» закреплена на уровне экрана ([PinnedBackButton]).
 class _HeroCarousel extends StatefulWidget {
   const _HeroCarousel({
     required this.slides,
     required this.imageBuilder,
-    required this.onBack,
   });
 
   final List<Slide> slides;
   final GameSlideImageBuilder imageBuilder;
-  final VoidCallback onBack;
 
   @override
   State<_HeroCarousel> createState() => _HeroCarouselState();
@@ -337,7 +352,7 @@ class _HeroCarouselState extends State<_HeroCarousel> {
   @override
   Widget build(BuildContext context) {
     if (widget.slides.isEmpty) {
-      return HeroBlock(height: 430, onBack: widget.onBack);
+      return const HeroBlock(height: 430);
     }
     return SizedBox(
       height: 430,
@@ -384,16 +399,6 @@ class _HeroCarouselState extends State<_HeroCarousel> {
                 end: Alignment.bottomCenter,
                 stops: [0.6, 1.0],
                 colors: AppColors.heroGradient,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 12,
-            left: 8,
-            child: SafeArea(
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: widget.onBack,
               ),
             ),
           ),

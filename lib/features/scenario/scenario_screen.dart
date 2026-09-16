@@ -154,40 +154,58 @@ class _ScenarioScreenState extends State<ScenarioScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgCream,
-      body: FutureBuilder<_ScenarioView?>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return _errorState(snapshot.error!);
-          }
-          final data = snapshot.data;
-          if (data == null) {
-            // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
-            if (widget.isOffline) {
-              return _messageScreen('Нет сети. Проверьте подключение.');
-            }
-            // Загрузка завершилась без данных — не «висеть» спиннером.
-            if (snapshot.connectionState == ConnectionState.done) {
-              return _messageScreen(
-                'Не удалось загрузить сценарий',
-                action: FilledButton(
-                  onPressed: _reload,
-                  child: const Text('Повторить'),
-                ),
-              );
-            }
-            return const Center(child: CircularProgressIndicator());
-          }
-          return _ScenarioContent(
-            scenario: data.scenario,
-            category: data.category,
-            heroImageRef: data.heroImageRef,
-            onOpenGame: widget.onOpenGame,
-            onShare: widget.onShare,
-            blockViewTracker: widget.blockViewTracker,
-          );
-        },
+      body: Stack(
+        children: [
+          // Кнопка «назад» закреплена поверх контента и не уезжает при
+          // скролле (US-E2-02).
+          _content(),
+          Positioned(
+            top: 0,
+            left: 0,
+            child: PinnedBackButton(
+              onBack: () => Navigator.of(context).maybePop(),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  /// Контент экрана: состояние загрузки/ошибки/данных.
+  Widget _content() {
+    return FutureBuilder<_ScenarioView?>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return _errorState(snapshot.error!);
+        }
+        final data = snapshot.data;
+        if (data == null) {
+          // Офлайн без кэша — понятное состояние «нет сети» (AC-02).
+          if (widget.isOffline) {
+            return _messageScreen('Нет сети. Проверьте подключение.');
+          }
+          // Загрузка завершилась без данных — не «висеть» спиннером.
+          if (snapshot.connectionState == ConnectionState.done) {
+            return _messageScreen(
+              'Не удалось загрузить сценарий',
+              action: FilledButton(
+                onPressed: _reload,
+                child: const Text('Повторить'),
+              ),
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        }
+        return _ScenarioContent(
+          scenario: data.scenario,
+          category: data.category,
+          heroImageRef: data.heroImageRef,
+          onOpenGame: widget.onOpenGame,
+          onShare: widget.onShare,
+          blockViewTracker: widget.blockViewTracker,
+        );
+      },
     );
   }
 
@@ -243,7 +261,6 @@ class _ScenarioContent extends StatelessWidget {
           height: 420,
           category: category?.toUpperCase(),
           title: scenario.title,
-          onBack: () => Navigator.of(context).maybePop(),
         ),
         // Интро: подзаголовок курсивом + «Поделиться» (US-E5-01).
         // Кнопка шаринга доступна для любого сценария, даже без подзаголовка.
