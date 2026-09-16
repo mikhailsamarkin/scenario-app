@@ -70,4 +70,28 @@ void main() {
       equals('https://scenario-games.ru/scenario/vecherinka?utm_source=share'),
     );
   });
+
+  test('SharePlusLauncher объединяет текст и URL: share_plus не принимает оба '
+      'одновременно', () async {
+    ShareParams? captured;
+    final launcher = SharePlusLauncher(
+      share: (params) async {
+        captured = params;
+        return const ShareResult('ok', ShareResultStatus.success);
+      },
+    );
+
+    await launcher.share(
+      text: 'Подборка',
+      uri: 'https://scenario-games.ru/scenario/vecherinka?utm_source=share',
+    );
+
+    expect(captured, isNotNull);
+    expect(captured!.uri, isNull);
+    expect(
+      captured!.text,
+      equals('Подборка\n'
+          'https://scenario-games.ru/scenario/vecherinka?utm_source=share'),
+    );
+  });
 }

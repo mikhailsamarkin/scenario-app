@@ -22,11 +22,18 @@ abstract interface class ShareLauncher {
 
 /// Реализация поверх share_plus.
 class SharePlusLauncher implements ShareLauncher {
+  SharePlusLauncher({Future<ShareResult> Function(ShareParams params)? share})
+      : _share = share ?? SharePlus.instance.share;
+
+  final Future<ShareResult> Function(ShareParams params) _share;
+
   @override
-  Future<ShareResult> share({required String text, required String uri}) async {
-    return SharePlus.instance.share(
-      ShareParams(text: text, uri: Uri.parse(uri)),
-    );
+  Future<ShareResult> share({required String text, required String uri}) {
+    // share_plus запрещает передавать text и uri одновременно
+    // (ArgumentError: "uri and text cannot be provided at the same time"),
+    // поэтому ссылку добавляем в текст одной строкой.
+    final message = uri.isEmpty ? text : '$text\n$uri';
+    return _share(ShareParams(text: message));
   }
 }
 
