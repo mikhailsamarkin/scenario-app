@@ -120,6 +120,9 @@
 | US-E12-01 | Применение `flutter-apply-architecture-best-practices`: слоистая архитектура `lib/` | [e12-apply-architecture-best-practices.md](e12-apply-architecture-best-practices.md) |
 | US-E12-02 | Применение `flutter-build-responsive-layout`: адаптивная вёрстка экранов МП | [e12-build-responsive-layout.md](e12-build-responsive-layout.md) |
 | US-E12-03 | Применение `flutter-architecture` (mad-agents-skills): MVVM + feature-first границы слоёв | [e12-flutter-architecture.md](e12-flutter-architecture.md) |
+| US-E12-04 | Применение `dart-collect-coverage` (dart-lang/skills): покрытие тестов и LCOV в CI | [e12-dart-collect-coverage.md](e12-dart-collect-coverage.md) |
+| US-E12-05 | Применение `supabase` (supabase/agent-skills): Storage-политики, RLS и миграции | [e12-supabase.md](e12-supabase.md) |
+| US-E12-06 | Применение `flutter-improving-accessibility` (flutter/agent-plugins): доступность экранов МП | [e12-improving-accessibility.md](e12-improving-accessibility.md) |
 
 ## Спецификации реализации
 
@@ -169,4 +172,4 @@
 
 ---
 
-**Всего:** 49 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
+**Всего:** 52 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
