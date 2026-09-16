@@ -2,8 +2,13 @@ name: CI
 
 # CI:
 # 1. gitleaks — проверка секретов в коде (A-40).
-# 2. flutter build apk --flavor dev — сборка dev-окружения.
-# 3. flutter build apk --flavor prod — сборка prod-окружения.
+# 2. flutter build apk --flavor dev — сборка dev-окружения
+#    (--dart-define=APP_ENV=dev, SUPABASE_ANON_KEY_DEV из secrets).
+# 3. flutter build apk --flavor prod — сборка prod-окружения
+#    (--dart-define=APP_ENV=prod, SUPABASE_ANON_KEY_PROD из secrets).
+#
+# ВАЖНО: флейвор и APP_ENV должны совпадать, иначе в APK попадут
+# Firebase-опции другого окружения и старт упадёт с core/duplicate-app.
 
 on:
   push:
@@ -75,7 +80,25 @@ jobs:
         run: flutter analyze
 
       - name: Build APK (dev)
-        run: flutter build apk --flavor dev
+        env:
+          SUPABASE_ANON_KEY_DEV: ${{ secrets.SUPABASE_ANON_KEY_DEV }}
+        run: |
+          if [ -z "$SUPABASE_ANON_KEY_DEV" ]; then
+            echo "::error::SUPABASE_ANON_KEY_DEV not configured"
+            exit 1
+          fi
+          flutter build apk --flavor dev \
+            --dart-define=APP_ENV=dev \
+            --dart-define=SUPABASE_ANON_KEY_DEV="$SUPABASE_ANON_KEY_DEV"
 
       - name: Build APK (prod)
-        run: flutter build apk --flavor prod
+        env:
+          SUPABASE_ANON_KEY_PROD: ${{ secrets.SUPABASE_ANON_KEY_PROD }}
+        run: |
+          if [ -z "$SUPABASE_ANON_KEY_PROD" ]; then
+            echo "::error::SUPABASE_ANON_KEY_PROD not configured"
+            exit 1
+          fi
+          flutter build apk --flavor prod \
+            --dart-define=APP_ENV=prod \
+            --dart-define=SUPABASE_ANON_KEY_PROD="$SUPABASE_ANON_KEY_PROD"
