@@ -113,6 +113,12 @@
 |----|--------|------|
 | US-E11-01 | Crashlytics в release: апгрейд google-services и подключение Gradle-плагина | [e11-crashlytics-release-gradle.md](e11-crashlytics-release-gradle.md) |
 
+## E12. Технический долг и рефакторинг
+
+| ID | Сторя | Файл |
+|----|--------|------|
+| US-E12-01 | Применение `flutter-apply-architecture-best-practices`: слоистая архитектура `lib/` | [e12-apply-architecture-best-practices.md](e12-apply-architecture-best-practices.md) |
+
 ## Спецификации реализации
 
 | ID | Спека | Сторя |
@@ -161,4 +167,4 @@
 
 ---
 
-**Всего:** 46 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
+**Всего:** 47 стори. Шаблон артефакта: [.cursor/skills/product-owner-lead/SKILL.md](../../../.cursor/skills/product-owner-lead/SKILL.md).
